@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Añade el enlace del repositorio en los metadatos del paquete.
+
 ## 0.0.5
 
 - Compacta la barra de respuesta en comentarios.
