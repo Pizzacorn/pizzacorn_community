@@ -1,0 +1,27 @@
+## 0.0.5
+
+- Compacta la barra de respuesta en comentarios.
+- Hace que el campo de respuesta crezca hasta cuatro líneas al escribir.
+- Cambia la barra de respuesta a `COLOR_BACKGROUND`.
+
+## 0.0.4
+
+- Añade imágenes en respuestas de comentarios.
+- Comprime las imágenes seleccionadas antes de subirlas para acelerar la publicación.
+- Evita errores de Firestore cuando una publicación llega sin id válido.
+- Ajusta la caja de respuesta para que suba con el teclado.
+
+## 0.0.3
+
+- Hace que el toque de like actualice corazón, color y contador localmente antes de sincronizar con Firebase.
+
+## 0.0.2
+
+- Elimina la cabecera superior de `CommunityPage`.
+- Añade `floatingButtonHeight` para ajustar la separación inferior del botón de publicar.
+
+## 0.0.1
+
+- Primera versión pública.
+- Añade `CommunityPage()` con publicaciones, imágenes, likes y comentarios.
+- Incluye citas, reposts, reportes y paginación Firestore.

@@ -1,0 +1,29 @@
+name: pizzacorn_community
+description: "Muro social reutilizable de Pizzacorn para Flutter y Firebase."
+version: 0.0.5
+homepage: https://github.com/Pizzacorn/pizzacorn_community
+
+environment:
+  sdk: ^3.9.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cloud_firestore: ^6.1.1
+  firebase_core: ^4.3.0
+  firebase_storage: ^13.0.4
+  flutter_riverpod: ^2.6.1
+  image_picker: ^1.2.1
+  intl: ^0.20.2
+  pizzacorn_ui: ^0.0.104
+  uicons_pro: ^1.1.0
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
