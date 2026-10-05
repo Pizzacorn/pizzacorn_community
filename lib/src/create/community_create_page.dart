@@ -34,24 +34,15 @@ class CommunityCreatePage extends ConsumerWidget {
                 children: [
                   ProfileImageCustom(
                     imageUrl: currentUser.image,
-                    size: 40,
+                    size: 45,
                     singleBorder: true,
                     innerBorderWidth: 0,
                     outerBorderWidth: 0,
                   ),
                   Space(SPACE_MEDIUM),
                   Expanded(
-                    child: TextField(
+                    child: CommunityMentionField(
                       controller: controller.textController,
-                      autofocus: true,
-                      minLines: 3,
-                      maxLines: 15,
-                      maxLength: 250,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(
-                        hintText: '¿Qué está pasando?',
-                        border: InputBorder.none,
-                      ),
                     ),
                   ),
                 ],
@@ -78,13 +69,14 @@ class CommunityCreatePage extends ConsumerWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
+      bottomSheet: Padding(
         padding: PADDING_ALL,
         child: Row(
           children: [
             IconButton(
               onPressed: controller.pickImages,
-              icon: Icon(UIconsPro.regularRounded.gallery, color: COLOR_ACCENT),
+              iconSize: 22,
+              icon: Icon(UIconsPro.regularRounded.picture, color: COLOR_ACCENT),
             ),
             Space(SPACE_MEDIUM),
             Expanded(

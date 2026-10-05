@@ -195,9 +195,9 @@ class CommunityClickableTextState extends State<CommunityClickableText> {
     for (int i = 0; i < matches.length; i++) {
       final RegExpMatch match = matches[i];
       if (match.start > lastMatchEnd) {
-        spans.add(
-          TextSpan(text: widget.text.substring(lastMatchEnd, match.start)),
-        );
+        spans.addAll(CommunityMentionController.spans(
+          text: widget.text.substring(lastMatchEnd, match.start),
+        ));
       }
       final String url = widget.text.substring(match.start, match.end);
       final TapGestureRecognizer recognizer = TapGestureRecognizer()
@@ -213,7 +213,9 @@ class CommunityClickableTextState extends State<CommunityClickableText> {
       lastMatchEnd = match.end;
     }
     if (lastMatchEnd < widget.text.length) {
-      spans.add(TextSpan(text: widget.text.substring(lastMatchEnd)));
+      spans.addAll(CommunityMentionController.spans(
+        text: widget.text.substring(lastMatchEnd),
+      ));
     }
     return RichText(
       text: TextSpan(style: styleBody(), children: spans),

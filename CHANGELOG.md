@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Deja de reexportar `pizzacorn_ui` desde `config/imports.dart`.
+- Mantiene la API de `pizzacorn_ui` disponible desde el barrel público de comunidad, excluyendo las colisiones existentes.
+
 ## 0.0.6
 
 - Añade el enlace del repositorio en los metadatos del paquete.

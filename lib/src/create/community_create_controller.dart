@@ -36,11 +36,11 @@ final communityCreateProvider = NotifierProvider.autoDispose
 class CommunityCreateController
     extends AutoDisposeFamilyNotifier<CommunityCreateState, CommunityModel?> {
   final CommunityRepository repository = CommunityRepository();
-  late TextEditingController textController;
+  late CommunityMentionController textController;
 
   @override
   CommunityCreateState build(CommunityModel? arg) {
-    textController = TextEditingController();
+    textController = CommunityMentionController();
     ref.onDispose(textController.dispose);
     return CommunityCreateState(quotePost: arg);
   }

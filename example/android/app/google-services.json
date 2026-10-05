@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75367582656",
+    "project_id": "pizzacorn-community",
+    "storage_bucket": "pizzacorn-community.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75367582656:android:e6c94d8a76a8b85a44d625",
+        "android_client_info": {
+          "package_name": "pizzacorn.community.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDsdhIkA9b2OXjsNjIY69eB2fBwfyi12E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

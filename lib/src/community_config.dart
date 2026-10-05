@@ -10,7 +10,12 @@ typedef CommunityNotificationCallback =
 typedef CommunityReportCallback =
     FutureOr<void> Function(CommunityModel communityModel, String reason);
 
+typedef CommunitySearchUsersCallback =
+    Future<List<CommunityUserModel>> Function({required String query});
+
 enum CommunityNotificationType { post, like }
+
+enum CommunityUsersSearchMode { normal, enterprise }
 
 class CommunityUserModel {
   final String id;
@@ -37,6 +42,15 @@ class PizzacornCommunityConfig {
   static CommunityProfileCallback? onOpenProfile;
   static CommunityNotificationCallback? onSendNotification;
   static CommunityReportCallback? onReport;
+  static CommunitySearchUsersCallback? onSearchUsers;
+  static String? usersCollection;
+  static String? usersNicknameField;
+  static String? usersNameField;
+  static String? usersImageField;
+  static CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal;
+
+  static bool get canSearchUsers => onSearchUsers != null ||
+      (usersCollection != null && usersNicknameField != null);
 
   static FirebaseFirestore get database {
     return PizzacornPaginationConfig.getFirestore(databaseName: databaseName);
@@ -52,7 +66,18 @@ void ConfigurePizzacornCommunity({
   CommunityProfileCallback? onOpenProfile,
   CommunityNotificationCallback? onSendNotification,
   CommunityReportCallback? onReport,
+  CommunitySearchUsersCallback? onSearchUsers,
+  String? usersCollection,
+  String? usersNicknameField,
+  String? usersNameField,
+  String? usersImageField,
+  CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal,
 }) {
+  if ((usersCollection != null || usersNicknameField != null) &&
+      (usersCollection == null || usersCollection.trim().isEmpty ||
+       usersNicknameField == null || usersNicknameField.trim().isEmpty)) {
+    throw ArgumentError('Indica usersCollection y usersNicknameField juntos.');
+  }
   PizzacornCommunityConfig.currentUser = currentUser ?? CommunityUserModel();
   PizzacornCommunityConfig.databaseName =
       PizzacornPaginationConfig.sanitizeDatabaseName(databaseName);
@@ -62,4 +87,10 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.onOpenProfile = onOpenProfile;
   PizzacornCommunityConfig.onSendNotification = onSendNotification;
   PizzacornCommunityConfig.onReport = onReport;
+  PizzacornCommunityConfig.onSearchUsers = onSearchUsers;
+  PizzacornCommunityConfig.usersCollection = usersCollection;
+  PizzacornCommunityConfig.usersNicknameField = usersNicknameField;
+  PizzacornCommunityConfig.usersNameField = usersNameField;
+  PizzacornCommunityConfig.usersImageField = usersImageField;
+  PizzacornCommunityConfig.usersSearchMode = usersSearchMode;
 }
