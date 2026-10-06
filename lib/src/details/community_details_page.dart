@@ -89,62 +89,55 @@ class CommunityDetailsPage extends ConsumerWidget {
           ],
         ),
       ),
-      bottomSheet: AnimatedPadding(
-        duration: Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+      bottomSheet: Container(
+        decoration: BoxDecoration(
+          color: COLOR_BACKGROUND
         ),
-        child: Material(
-          color: COLOR_BACKGROUND,
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: DOUBLE_PADDING_SMALL,
-                vertical: DOUBLE_PADDING_SMALL,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: SPACE_SMALL,
+            vertical: SPACE_MEDIUM,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (state.images.isNotEmpty) ...[
+                CommunitySelectedImages(
+                  images: state.images,
+                  onRemoveImage: controller.removeImage,
+                  height: 110,
+                  width: 140,
+                ),
+                Space(SPACE_SMALL),
+              ],
+              Row(
                 children: [
-                  if (state.images.isNotEmpty) ...[
-                    CommunitySelectedImages(
-                      images: state.images,
-                      onRemoveImage: controller.removeImage,
-                      height: 110,
-                      width: 140,
+                  IconButton(
+                    onPressed: controller.pickImages,
+                    icon: Icon(
+                      UIconsPro.regularRounded.picture,
+                      color: COLOR_ACCENT,
+                      size: 20,
                     ),
-                    Space(SPACE_SMALL),
-                  ],
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: controller.pickImages,
-                        icon: Icon(
-                          UIconsPro.regularRounded.gallery,
-                          color: COLOR_ACCENT,
-                        ),
-                      ),
-                      Expanded(
-                        child: TextFieldCustom(
-                          controller: controller.textController,
-                          hintText: 'Añade una respuesta',
-                          textCapitalization: TextCapitalization.sentences,
-                          textInputType: TextInputType.multiline,
-                          minLines: 1,
-                          maxLines: 4,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () =>
-                            controller.saveComment(context: context),
-                        icon: Icon(Icons.send_rounded, color: COLOR_ACCENT),
-                      ),
-                    ],
+                  ),
+                  Expanded(
+                    child: TextFieldCustom(
+                      controller: controller.textController,
+                      hintText: 'Añade una respuesta',
+                      textCapitalization: TextCapitalization.sentences,
+                      textInputType: TextInputType.multiline,
+                      minLines: 1,
+                      maxLines: 4,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () =>
+                        controller.saveComment(context: context),
+                    icon: Icon( UIconsPro.regularRounded.paper_plane_top, color: COLOR_ACCENT, size: 20,),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
       ),
