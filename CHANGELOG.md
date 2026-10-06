@@ -2,6 +2,8 @@
 
 - Deja de reexportar `pizzacorn_ui` desde `config/imports.dart`.
 - Mantiene la API de `pizzacorn_ui` disponible desde el barrel público de comunidad, excluyendo las colisiones existentes.
+- Añade filtros opcionales para el muro y la publicación, con colores configurables para el control segmentado.
+- Añade menciones de usuarios y entidades en publicaciones y citas, con búsqueda configurable.
 
 ## 0.0.6
 

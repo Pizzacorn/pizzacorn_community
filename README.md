@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.5
+  pizzacorn_community: ^0.0.7
 ```
 
 ```dart
@@ -52,6 +52,22 @@ CommunityPage(
 
 `floatingButtonHeight` define la separación inferior del botón para publicar.
 Su valor por defecto es `0`.
+
+Para mostrar categorías en el muro y al publicar, configura los filtros y sus
+colores opcionales:
+
+```dart
+ConfigurePizzacornCommunity(
+  currentUser: currentUserModel,
+  filters: ['Noticias', 'Eventos', 'Preguntas'],
+  filterColor: Colors.orange,
+  filterTextColor: Colors.white,
+);
+```
+
+Sin `filters` no aparece el control segmentado. Las publicaciones guardan la
+categoría en el campo `filter`; `type` conserva el tipo de publicación. «Todos»
+incluye también las publicaciones anteriores sin categoría.
 
 La colección Firestore utilizada es `Community`. Los reportes se guardan en
 `Reports`. Las imágenes se almacenan en `community_posts/{userId}` y las
