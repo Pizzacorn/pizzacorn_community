@@ -34,20 +34,28 @@ class CommunityMentionFieldState extends State<CommunityMentionField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
-          controller: widget.controller,
-          focusNode: focusNode,
-          autofocus: true,
-          minLines: 1,
-          maxLines: 6,
-          maxLength: 250,
-          textCapitalization: TextCapitalization.sentences,
-          style: styleBody(),
-          decoration: InputDecoration(
-            hintText: '¿Qué está pasando?',
-            hintStyle: styleBody(color: COLOR_SUBTEXT),
-            counterStyle: styleSmall(size: 0),
-            border: InputBorder.none,
+        ColoredBox(
+          color: Colors.white,
+          child: TextField(
+            controller: widget.controller,
+            focusNode: focusNode,
+            autofocus: true,
+            minLines: 1,
+            maxLines: 6,
+            maxLength: 250,
+            textCapitalization: TextCapitalization.sentences,
+            style: styleBody(),
+            decoration: InputDecoration(
+              hintText: '¿Qué esta pasando?',
+              hintStyle: styleBody(color: COLOR_SUBTEXT),
+              counterText: '',
+              isCollapsed: true,
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+            ),
           ),
         ),
         ValueListenableBuilder<TextEditingValue>(

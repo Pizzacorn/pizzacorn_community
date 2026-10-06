@@ -40,6 +40,9 @@ class CommunityPrincipalContent extends StatelessWidget {
         : isSecondary
         ? communityModel.secondaryUserId
         : communityModel.userId;
+    final CommunityProfileCallback? onTapUser =
+        PizzacornCommunityConfig.onTapUser ??
+        PizzacornCommunityConfig.onOpenProfile;
     final String text = isThird
         ? communityModel.thirdText
         : isSecondary
@@ -74,9 +77,9 @@ class CommunityPrincipalContent extends StatelessWidget {
               singleBorder: true,
               innerBorderWidth: 0,
               outerBorderWidth: 0,
-              onPressed: () {
-                PizzacornCommunityConfig.onOpenProfile?.call(context, userId);
-              },
+              onPressed: onTapUser == null || userId.isEmpty
+                  ? null
+                  : () => onTapUser(context, userId),
             ),
             Space(SPACE_SMALL),
             Expanded(

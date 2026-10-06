@@ -1,3 +1,8 @@
+## 0.0.10
+
+- Añade `onTapUser` para abrir perfiles desde las fotos, conservando `onOpenProfile` como alternativa.
+- Deja el editor de publicaciones blanco, sin bordes ni relleno, con el texto «¿Qué esta pasando?».
+
 ## 0.0.9
 
 - Mantiene el filtro del muro fijo en la parte superior y sin padding exterior.

@@ -2,6 +2,50 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pizzacorn_community/pizzacorn_community.dart';
 
 void main() {
+  testWidgets('La foto abre el perfil con el callback nuevo o el anterior', (tester) async {
+    final List<String> opened = [];
+    ConfigurePizzacornCommunity(
+      onTapUser: (context, id) { opened.add('nuevo:$id'); },
+      onOpenProfile: (context, id) { opened.add('anterior:$id'); },
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: CommunityPrincipalContent(
+      communityModel: CommunityModel(userId: 'author', createdAt: DateTime.now()),
+    ))));
+    await tester.tap(find.byType(ProfileImageCustom));
+    expect(opened, ['nuevo:author']);
+
+    ConfigurePizzacornCommunity(
+      onOpenProfile: (context, id) { opened.add('anterior:$id'); },
+    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: CommunityPrincipalContent(
+      communityModel: CommunityModel(secondaryUserId: 'quoted', createdAt: DateTime.now()),
+      isSecondary: true,
+    ))));
+    await tester.tap(find.byType(ProfileImageCustom));
+    expect(opened, ['nuevo:author', 'anterior:quoted']);
+    await tester.pumpWidget(SizedBox());
+  });
+
+  testWidgets('El editor muestra un campo blanco sin borde y con el texto solicitado', (tester) async {
+    final CommunityMentionController controller = CommunityMentionController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: CommunityMentionField(
+      controller: controller,
+    ))));
+    final TextField textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.decoration!.hintText, '¿Qué esta pasando?');
+    expect(textField.decoration!.filled, isFalse);
+    expect(textField.decoration!.border, InputBorder.none);
+    expect(textField.decoration!.focusedBorder, InputBorder.none);
+    final ColoredBox background = tester.widget<ColoredBox>(find.ancestor(
+      of: find.byType(TextField),
+      matching: find.byType(ColoredBox),
+    ).first);
+    expect(background.color, Colors.white);
+    await tester.pumpWidget(SizedBox());
+  });
+
   test('Los IDs seleccionados sobreviven la serialización y se omiten al borrar el texto', () {
     final CommunityMentionController controller = CommunityMentionController();
     addTearDown(controller.dispose);

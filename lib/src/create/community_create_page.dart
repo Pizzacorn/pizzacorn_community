@@ -39,6 +39,16 @@ class CommunityCreatePage extends ConsumerWidget {
                     singleBorder: true,
                     innerBorderWidth: 0,
                     outerBorderWidth: 0,
+                    onPressed: currentUser.id.isEmpty ||
+                            (PizzacornCommunityConfig.onTapUser == null &&
+                                PizzacornCommunityConfig.onOpenProfile == null)
+                        ? null
+                        : () {
+                            final CommunityProfileCallback onTapUser =
+                                PizzacornCommunityConfig.onTapUser ??
+                                PizzacornCommunityConfig.onOpenProfile!;
+                            onTapUser(context, currentUser.id);
+                          },
                   ),
                   Space(SPACE_MEDIUM),
                   Expanded(

@@ -49,6 +49,7 @@ class PizzacornCommunityConfig {
   static Color? filterColor;
   static Color? filterTextColor;
   static CommunityProfileCallback? onOpenProfile;
+  static CommunityProfileCallback? onTapUser;
   static CommunityProfileCallback? onTapUserMention;
   static CommunityProfileCallback? onTapEntityMention;
   static CommunityNotificationCallback? onSendNotification;
@@ -92,6 +93,7 @@ void ConfigurePizzacornCommunity({
   Color? filterColor,
   Color? filterTextColor,
   CommunityProfileCallback? onOpenProfile,
+  CommunityProfileCallback? onTapUser,
   CommunityProfileCallback? onTapUserMention,
   CommunityProfileCallback? onTapEntityMention,
   CommunityNotificationCallback? onSendNotification,
@@ -135,6 +137,7 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.filterColor = filterColor;
   PizzacornCommunityConfig.filterTextColor = filterTextColor;
   PizzacornCommunityConfig.onOpenProfile = onOpenProfile;
+  PizzacornCommunityConfig.onTapUser = onTapUser;
   PizzacornCommunityConfig.onTapUserMention = onTapUserMention;
   PizzacornCommunityConfig.onTapEntityMention = onTapEntityMention;
   PizzacornCommunityConfig.onSendNotification = onSendNotification;

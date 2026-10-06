@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.9
+  pizzacorn_community: ^0.0.10
 ```
 
 ```dart
@@ -26,11 +26,15 @@ ConfigurePizzacornCommunity(
     image: USER.image,
     blockedUsers: USER.blockedUsers,
   ),
-  onOpenProfile: (context, userId) async {
+  onTapUser: (context, userId) async {
     // Abre aquí el perfil propio de tu aplicación.
   },
 );
 ```
+
+`onTapUser` se ejecuta al tocar la foto del autor en el muro, los detalles o
+el editor de una publicación. Si ya usas `onOpenProfile`, seguirá funcionando
+como alternativa cuando `onTapUser` no esté configurado.
 
 Antes de mostrar el muro, inicializa los datos de fecha de `intl` para la locale
 española usada por las fechas de las publicaciones:
@@ -134,7 +138,7 @@ onTapEntityMention: (context, entityId) async {
 },
 ```
 
-No se activan callbacks en el editor ni en previsualizaciones de creación.
+No se activan callbacks de menciones en el editor ni en previsualizaciones de creación.
 Las publicaciones antiguas o menciones escritas sin seleccionar una sugerencia
 no tienen un ID asociado y permanecen como texto resaltado sin pulsación.
 Las reglas de escritura de la aplicación deben permitir los nuevos mapas.
