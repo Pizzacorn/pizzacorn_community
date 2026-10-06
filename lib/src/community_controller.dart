@@ -50,14 +50,16 @@ class CommunityState {
   final bool isLoading;
   final String isError;
   final String selectedFilter;
+  final String searchQuery;
 
-  CommunityState({this.isLoading = false, this.isError = '', this.selectedFilter = ''});
+  CommunityState({this.isLoading = false, this.isError = '', this.selectedFilter = '', this.searchQuery = ''});
 
-  CommunityState copyWith({bool? isLoading, String? isError, String? selectedFilter}) {
+  CommunityState copyWith({bool? isLoading, String? isError, String? selectedFilter, String? searchQuery}) {
     return CommunityState(
       isLoading: isLoading ?? this.isLoading,
       isError: isError ?? this.isError,
       selectedFilter: selectedFilter ?? this.selectedFilter,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 }
@@ -69,9 +71,25 @@ final communityControllerProvider =
 
 class CommunityController extends AutoDisposeNotifier<CommunityState> {
   final CommunityRepository repository = CommunityRepository();
+  Timer? searchDebounce;
 
   @override
-  CommunityState build() => CommunityState();
+  CommunityState build() {
+    ref.onDispose(() => searchDebounce?.cancel());
+    return CommunityState();
+  }
+
+  void search({required String query}) {
+    searchDebounce?.cancel();
+    final String cleanQuery = query.trim();
+    if (cleanQuery.isEmpty) {
+      state = state.copyWith(searchQuery: '');
+      return;
+    }
+    searchDebounce = Timer(Duration(milliseconds: 300), () {
+      state = state.copyWith(searchQuery: cleanQuery);
+    });
+  }
 
   void selectFilter({required String filter}) {
     state = state.copyWith(selectedFilter: filter);
@@ -245,6 +263,9 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
       }
     }
     ref.read(provider.notifier).state = currentState.copyWith(items: items);
+    if ((isAddition || isRemoval) && state.searchQuery.isNotEmpty) {
+      ref.invalidate(communitySearchProvider((state.searchQuery, state.selectedFilter)));
+    }
   }
 
   void updateCountGlobal({

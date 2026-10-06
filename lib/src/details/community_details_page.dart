@@ -15,12 +15,12 @@ class CommunityDetailsPage extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: COLOR_BACKGROUND_SECONDARY,
+      backgroundColor: PizzacornCommunityConfig.backgroundSecondaryColor,
       resizeToAvoidBottomInset: true,
       appBar: AppBarBack(
         context: context,
         title: 'Publicación',
-        color: COLOR_BACKGROUND,
+        color: PizzacornCommunityConfig.backgroundColor,
       ),
       body: Loading(
         loading: state.isLoading,
@@ -91,7 +91,7 @@ class CommunityDetailsPage extends ConsumerWidget {
       ),
       bottomSheet: Container(
         decoration: BoxDecoration(
-          color: COLOR_BACKGROUND
+          color: PizzacornCommunityConfig.backgroundColor
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(

@@ -1,3 +1,9 @@
+## 0.0.8
+
+- Permite configurar los fondos principal y secundario solo para la comunidad.
+- Añade un buscador opcional de publicaciones con Firestore Enterprise y filtro por categoría.
+- Limita `uicons_pro` a las versiones compatibles con `pizzacorn_ui`.
+
 ## 0.0.7
 
 - Deja de reexportar `pizzacorn_ui` desde `config/imports.dart`.

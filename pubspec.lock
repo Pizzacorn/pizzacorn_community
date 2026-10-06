@@ -1062,10 +1062,10 @@ packages:
     dependency: "direct main"
     description:
       name: uicons_pro
-      sha256: "52c582e1efef4549bca3dbfd2f85a83609af52ce90f351c927b59e7b018a8021"
+      sha256: "5dd2d4c73fd520e54ec95450c58917093074fb18a3e5655960508c06b406f66f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.1.0"
   universal_io:
     dependency: transitive
     description:

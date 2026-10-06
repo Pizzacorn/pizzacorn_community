@@ -29,7 +29,7 @@ class CommunityWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: SPACE_SMALL),
         decoration: BoxDecoration(
-          color: COLOR_BACKGROUND,
+          color: PizzacornCommunityConfig.backgroundColor,
           borderRadius: noBorderRadius ? null : BorderRadius.circular(RADIUS),
           border: Border(bottom: BorderSide(color: COLOR_BORDER, width: 0.5)),
         ),

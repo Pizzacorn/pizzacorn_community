@@ -37,8 +37,14 @@ class PizzacornCommunityConfig {
   static CommunityUserModel currentUser = CommunityUserModel();
   static String? databaseName;
   static int paginationSize = 20;
+  static bool showSearch = false;
   static String title = 'Comunidad';
   static String? backgroundAsset;
+  static Color? customBackgroundColor;
+  static Color? customBackgroundSecondaryColor;
+  static Color get backgroundColor => customBackgroundColor ?? COLOR_BACKGROUND;
+  static Color get backgroundSecondaryColor =>
+      customBackgroundSecondaryColor ?? COLOR_BACKGROUND_SECONDARY;
   static List<String> filters = const [];
   static Color? filterColor;
   static Color? filterTextColor;
@@ -77,8 +83,11 @@ void ConfigurePizzacornCommunity({
   CommunityUserModel? currentUser,
   String? databaseName,
   int paginationSize = 20,
+  bool showSearch = false,
   String title = 'Comunidad',
   String? backgroundAsset,
+  Color? backgroundColor,
+  Color? backgroundSecondaryColor,
   List<String> filters = const [],
   Color? filterColor,
   Color? filterTextColor,
@@ -116,8 +125,12 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.databaseName =
       PizzacornPaginationConfig.sanitizeDatabaseName(databaseName);
   PizzacornCommunityConfig.paginationSize = paginationSize;
+  PizzacornCommunityConfig.showSearch = showSearch;
   PizzacornCommunityConfig.title = title;
   PizzacornCommunityConfig.backgroundAsset = backgroundAsset;
+  PizzacornCommunityConfig.customBackgroundColor = backgroundColor;
+  PizzacornCommunityConfig.customBackgroundSecondaryColor =
+      backgroundSecondaryColor;
   PizzacornCommunityConfig.filters = List.unmodifiable(filters);
   PizzacornCommunityConfig.filterColor = filterColor;
   PizzacornCommunityConfig.filterTextColor = filterTextColor;

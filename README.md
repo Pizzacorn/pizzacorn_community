@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.7
+  pizzacorn_community: ^0.0.8
 ```
 
 ```dart
@@ -68,6 +68,25 @@ ConfigurePizzacornCommunity(
 Sin `filters` no aparece el control segmentado. Las publicaciones guardan la
 categoría en el campo `filter`; `type` conserva el tipo de publicación. «Todos»
 incluye también las publicaciones anteriores sin categoría.
+
+### Búsqueda de publicaciones
+
+En una base Firestore Enterprise, activa el buscador situado encima de los filtros:
+
+```dart
+ConfigurePizzacornCommunity(
+  currentUser: currentUserModel,
+  databaseName: 'nombre-de-tu-base-enterprise',
+  showSearch: true,
+);
+```
+
+`showSearch` es `false` por defecto; con ese valor el muro conserva su consulta
+paginada habitual. La búsqueda consulta el campo `text` de `Community` y aplica
+`hidden`, `type` y el filtro seleccionado en Firebase. Debes crear un índice de
+texto Enterprise para `Community.text` en la base configurada. Los resultados
+están limitados a `paginationSize` y se actualizan al cambiar el texto o el filtro.
+No se buscan los campos `secondaryText` ni `thirdText`.
 
 La colección Firestore utilizada es `Community`. Los reportes se guardan en
 `Reports`. Las imágenes se almacenan en `community_posts/{userId}` y las

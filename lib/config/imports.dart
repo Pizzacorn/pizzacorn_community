@@ -1,5 +1,6 @@
 export 'dart:async';
 export '../src/functions/community_users_repository.dart';
+export '../src/functions/community_search_repository.dart';
 export '../src/create/community_mention_controller.dart';
 export '../src/create/community_mention_field.dart';
 export '../src/create/community_mention_sheet.dart';

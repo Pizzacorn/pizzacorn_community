@@ -16,9 +16,10 @@ class CommunityCreatePage extends ConsumerWidget {
     final CommunityUserModel currentUser = PizzacornCommunityConfig.currentUser;
 
     return Scaffold(
-      backgroundColor: COLOR_BACKGROUND,
+      backgroundColor: PizzacornCommunityConfig.backgroundColor,
       appBar: AppBarBack(
         context: context,
+        color: PizzacornCommunityConfig.backgroundColor,
         title: state.quotePost == null
             ? 'Nueva publicación'
             : 'Citar publicación',
@@ -96,7 +97,7 @@ class CommunityCreatePage extends ConsumerWidget {
       bottomSheet: Container(
         height: 90,
         decoration: BoxDecoration(
-          color: COLOR_BACKGROUND,
+          color: PizzacornCommunityConfig.backgroundColor,
           border: Border(top: BorderSide(color: COLOR_BORDER))
         ),
         child: Padding(
