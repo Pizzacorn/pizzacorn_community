@@ -45,129 +45,130 @@ class CommunityPage extends ConsumerWidget {
                   image: AssetImage(PizzacornCommunityConfig.backgroundAsset!),
                 ),
               ),
-        child: CustomScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          slivers: [
-            if (PizzacornCommunityConfig.showSearch)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: PADDING_ALL,
-                  child: TextFieldCustom(
-                    hintText: 'Buscar publicaciones',
-                    prefixIcon: UIconsPro.regularRounded.search,
-                    onChanged: (query) {
-                      ref.read(communityControllerProvider.notifier).search(query: query);
-                    },
-                  ),
-                ),
-              ),
+        child: Column(
+          children: [
             if (filters.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: PADDING_ALL,
-                  child: SegmentedControlCustom(
-                    items: ['Todos', ...filters],
-                    thumbColor: PizzacornCommunityConfig.filterColor,
-                    activeTextColor: PizzacornCommunityConfig.filterTextColor,
-                    inactiveTextColor: PizzacornCommunityConfig.filterTextColor,
-                    currentIndex: selectedFilter.isEmpty
-                        ? 0
-                        : filters.indexOf(selectedFilter) + 1,
-                    onValueChanged: (index) {
-                      ref.read(communityControllerProvider.notifier).selectFilter(
-                        filter: index == 0 ? '' : filters[index - 1],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            CupertinoSliverRefreshControl(
-              onRefresh: () async {
-                if (searchResults != null) {
-                  ref.invalidate(communitySearchProvider(searchParams));
-                  await ref.read(communitySearchProvider(searchParams).future);
-                  return;
-                }
-                await ref.read(paginationProvider(params).notifier).refresh();
-              },
-            ),
-            if (searchResults != null)
-              searchResults.when(
-                data: (posts) => SliverPadding(
-                  padding: PADDING_ALL,
-                  sliver: posts.isEmpty
-                      ? SliverToBoxAdapter(
-                          child: Center(child: TextBody('No hay publicaciones para esta búsqueda.')),
-                        )
-                      : SliverList.builder(
-                          itemCount: posts.length,
-                          itemBuilder: (context, index) {
-                            final CommunityModel communityModel = posts[index];
-                            if (currentUser.blockedUsers.contains(communityModel.userId)) {
-                              return SizedBox.shrink();
-                            }
-                            return CommunityWidget(
-                              communityModel: communityModel,
-                              params: params,
-                              onDelete: () {
-                                ref.read(communityControllerProvider.notifier).delete(
-                                  communityModel: communityModel,
-                                  params: params,
-                                );
-                              },
-                            );
-                          },
-                        ),
-                ),
-                loading: () => SliverToBoxAdapter(
-                  child: Center(child: CupertinoActivityIndicator()),
-                ),
-                error: (error, stackTrace) => SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      TextBody('No se pudieron buscar las publicaciones.'),
-                      TextButton(
-                        onPressed: () => ref.invalidate(communitySearchProvider(searchParams)),
-                        child: TextButtonCustom('Reintentar'),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else SliverPadding(
-              padding: PADDING_ALL,
-              sliver: SliverListCustom<CommunityModel>(
-                params: params,
-                itemPlaceholder: CommunityModel(),
-                idExtractor: (communityModel) => communityModel.id,
-                emptyWidget: Center(
-                  child: Padding(
-                    padding: PADDING_ALL,
-                    child: TextBody('Todavía no hay publicaciones.'),
-                  ),
-                ),
-                itemBuilder: (communityModel) {
-                  if (currentUser.blockedUsers.contains(
-                    communityModel.userId,
-                  )) {
-                    return SizedBox.shrink();
-                  }
-                  return CommunityWidget(
-                    communityModel: communityModel,
-                    params: params,
-                    onDelete: () {
-                      ref
-                          .read(communityControllerProvider.notifier)
-                          .delete(
-                            communityModel: communityModel,
-                            params: params,
-                          );
-                    },
+              SegmentedControlCustom(
+                items: ['Todos', ...filters],
+                thumbColor: PizzacornCommunityConfig.filterColor,
+                activeTextColor: PizzacornCommunityConfig.filterTextColor,
+                inactiveTextColor: PizzacornCommunityConfig.filterTextColor,
+                currentIndex: selectedFilter.isEmpty
+                    ? 0
+                    : filters.indexOf(selectedFilter) + 1,
+                onValueChanged: (index) {
+                  ref.read(communityControllerProvider.notifier).selectFilter(
+                    filter: index == 0 ? '' : filters[index - 1],
                   );
                 },
               ),
+            Expanded(
+              child: CustomScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  if (PizzacornCommunityConfig.showSearch)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: PADDING_ALL,
+                        child: TextFieldCustom(
+                          hintText: 'Buscar publicaciones',
+                          prefixIcon: UIconsPro.regularRounded.search,
+                          onChanged: (query) {
+                            ref.read(communityControllerProvider.notifier).search(query: query);
+                          },
+                        ),
+                      ),
+                    ),
+                  CupertinoSliverRefreshControl(
+                    onRefresh: () async {
+                      if (searchResults != null) {
+                        ref.invalidate(communitySearchProvider(searchParams));
+                        await ref.read(communitySearchProvider(searchParams).future);
+                        return;
+                      }
+                      await ref.read(paginationProvider(params).notifier).refresh();
+                    },
+                  ),
+                  if (searchResults != null)
+                    searchResults.when(
+                      data: (posts) => SliverPadding(
+                        padding: PADDING_ALL,
+                        sliver: posts.isEmpty
+                            ? SliverToBoxAdapter(
+                                child: Center(child: TextBody('No hay publicaciones para esta búsqueda.')),
+                              )
+                            : SliverList.builder(
+                                itemCount: posts.length,
+                                itemBuilder: (context, index) {
+                                  final CommunityModel communityModel = posts[index];
+                                  if (currentUser.blockedUsers.contains(communityModel.userId)) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return CommunityWidget(
+                                    communityModel: communityModel,
+                                    params: params,
+                                    onDelete: () {
+                                      ref.read(communityControllerProvider.notifier).delete(
+                                        communityModel: communityModel,
+                                        params: params,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                      loading: () => SliverToBoxAdapter(
+                        child: Center(child: CupertinoActivityIndicator()),
+                      ),
+                      error: (error, stackTrace) => SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            TextBody('No se pudieron buscar las publicaciones.'),
+                            TextButton(
+                              onPressed: () => ref.invalidate(communitySearchProvider(searchParams)),
+                              child: TextButtonCustom('Reintentar'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else SliverPadding(
+                    padding: PADDING_ALL,
+                    sliver: SliverListCustom<CommunityModel>(
+                      params: params,
+                      itemPlaceholder: CommunityModel(),
+                      idExtractor: (communityModel) => communityModel.id,
+                      emptyWidget: Center(
+                        child: Padding(
+                          padding: PADDING_ALL,
+                          child: TextBody('Todavía no hay publicaciones.'),
+                        ),
+                      ),
+                      itemBuilder: (communityModel) {
+                        if (currentUser.blockedUsers.contains(
+                          communityModel.userId,
+                        )) {
+                          return SizedBox.shrink();
+                        }
+                        return CommunityWidget(
+                          communityModel: communityModel,
+                          params: params,
+                          onDelete: () {
+                            ref
+                                .read(communityControllerProvider.notifier)
+                                .delete(
+                                  communityModel: communityModel,
+                                  params: params,
+                                );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: Space(SPACE_BIGGER)),
+                ],
+              ),
             ),
-            SliverToBoxAdapter(child: Space(SPACE_BIGGER)),
           ],
         ),
       ),

@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.8
+  pizzacorn_community: ^0.0.9
 ```
 
 ```dart
@@ -71,7 +71,7 @@ incluye también las publicaciones anteriores sin categoría.
 
 ### Búsqueda de publicaciones
 
-En una base Firestore Enterprise, activa el buscador situado encima de los filtros:
+En una base Firestore Enterprise, activa el buscador situado debajo del filtro fijo:
 
 ```dart
 ConfigurePizzacornCommunity(

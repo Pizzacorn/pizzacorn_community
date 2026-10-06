@@ -1,3 +1,8 @@
+## 0.0.9
+
+- Mantiene el filtro del muro fijo en la parte superior y sin padding exterior.
+- Sitúa el buscador y las publicaciones en el contenido desplazable debajo del filtro.
+
 ## 0.0.8
 
 - Permite configurar los fondos principal y secundario solo para la comunidad.
