@@ -1,14 +1,22 @@
 import 'package:pizzacorn_community/pizzacorn_community.dart';
 
-PaginationParams<CommunityModel> get communityParams {
+PaginationParams<CommunityModel> get communityParams => communityParamsForFilter();
+
+PaginationParams<CommunityModel> communityParamsForFilter({String filter = ''}) {
   final CommunityUserModel currentUser = PizzacornCommunityConfig.currentUser;
   return PaginationParams<CommunityModel>(
     collection: CommunityRepository.collectionName,
-    identifier: 'community_${currentUser.id}',
+    identifier: filter.isEmpty
+        ? 'community_${currentUser.id}'
+        : 'community_${currentUser.id}_$filter',
     databaseName: PizzacornCommunityConfig.databaseName,
     limit: PizzacornCommunityConfig.paginationSize,
     fromJson: (data) => CommunityModel.fromJson(data),
-    query: (query) => query
+    query: (query) {
+      final filteredQuery = filter.isEmpty
+          ? query
+          : query.where('filter', isEqualTo: filter);
+      return filteredQuery
         .where('hidden', isEqualTo: false)
         .where(
           'type',
@@ -18,7 +26,8 @@ PaginationParams<CommunityModel> get communityParams {
             CommunityType.quote.name,
           ],
         )
-        .orderBy('createdAt', descending: true),
+        .orderBy('createdAt', descending: true);
+    },
   );
 }
 
@@ -40,13 +49,15 @@ final postCountersFirebaseProvider =
 class CommunityState {
   final bool isLoading;
   final String isError;
+  final String selectedFilter;
 
-  CommunityState({this.isLoading = false, this.isError = ''});
+  CommunityState({this.isLoading = false, this.isError = '', this.selectedFilter = ''});
 
-  CommunityState copyWith({bool? isLoading, String? isError}) {
+  CommunityState copyWith({bool? isLoading, String? isError, String? selectedFilter}) {
     return CommunityState(
       isLoading: isLoading ?? this.isLoading,
       isError: isError ?? this.isError,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
     );
   }
 }
@@ -61,6 +72,10 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
 
   @override
   CommunityState build() => CommunityState();
+
+  void selectFilter({required String filter}) {
+    state = state.copyWith(selectedFilter: filter);
+  }
 
   Future<bool> like({
     required CommunityModel communityModel,
@@ -116,6 +131,7 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
       if (willRepost) {
         final CommunityModel repostModel = CommunityModel(
           type: CommunityType.repost,
+          filter: communityModel.filter,
           secondaryId: communityModel.type == CommunityType.repost
               ? communityModel.secondaryId
               : communityModel.id,
@@ -134,6 +150,9 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
           secondaryText: communityModel.type == CommunityType.repost
               ? communityModel.secondaryText
               : communityModel.text,
+          secondaryMentionIds: communityModel.type == CommunityType.repost
+              ? communityModel.secondaryMentionIds
+              : communityModel.mentionIds,
           secondaryMedia: communityModel.type == CommunityType.repost
               ? communityModel.secondaryMedia
               : communityModel.media,
@@ -144,6 +163,7 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
           thirdUserUsername: communityModel.thirdUserUsername,
           thirdUserImage: communityModel.thirdUserImage,
           thirdText: communityModel.thirdText,
+          thirdMentionIds: communityModel.thirdMentionIds,
           thirdMedia: communityModel.thirdMedia,
         );
         final CommunityModel saved = await repository.save(

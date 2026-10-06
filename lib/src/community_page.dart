@@ -8,7 +8,14 @@ class CommunityPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final CommunityUserModel currentUser = PizzacornCommunityConfig.currentUser;
-    final PaginationParams<CommunityModel> params = communityParams;
+    final CommunityState state = ref.watch(communityControllerProvider);
+    final List<String> filters = PizzacornCommunityConfig.filters;
+    final String selectedFilter = filters.contains(state.selectedFilter)
+        ? state.selectedFilter
+        : '';
+    final PaginationParams<CommunityModel> params = communityParamsForFilter(
+      filter: selectedFilter,
+    );
 
     return Scaffold(
       backgroundColor: COLOR_BACKGROUND_SECONDARY,
@@ -34,6 +41,26 @@ class CommunityPage extends ConsumerWidget {
         child: CustomScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           slivers: [
+            if (filters.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: PADDING_ALL,
+                  child: SegmentedControlCustom(
+                    items: ['Todos', ...filters],
+                    thumbColor: PizzacornCommunityConfig.filterColor,
+                    activeTextColor: PizzacornCommunityConfig.filterTextColor,
+                    inactiveTextColor: PizzacornCommunityConfig.filterTextColor,
+                    currentIndex: selectedFilter.isEmpty
+                        ? 0
+                        : filters.indexOf(selectedFilter) + 1,
+                    onValueChanged: (index) {
+                      ref.read(communityControllerProvider.notifier).selectFilter(
+                        filter: index == 0 ? '' : filters[index - 1],
+                      );
+                    },
+                  ),
+                ),
+              ),
             CupertinoSliverRefreshControl(
               onRefresh: () {
                 return ref.read(paginationProvider(params).notifier).refresh();

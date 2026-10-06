@@ -6,6 +6,7 @@ class CommunityPrincipalContent extends StatelessWidget {
   final bool isSecondary;
   final bool isThird;
   final bool showBorder;
+  final bool mentionsEnabled;
 
   CommunityPrincipalContent({
     super.key,
@@ -14,6 +15,7 @@ class CommunityPrincipalContent extends StatelessWidget {
     this.isSecondary = false,
     this.isThird = false,
     this.showBorder = false,
+    this.mentionsEnabled = true,
   });
 
   @override
@@ -106,7 +108,13 @@ class CommunityPrincipalContent extends StatelessWidget {
                   ),
                   if (text.isNotEmpty) ...[
                     Space(SPACE_SMALLEST),
-                    CommunityClickableText(text: text),
+                    CommunityClickableText(
+                      text: text,
+                      mentionsEnabled: mentionsEnabled,
+                      mentionIds: isThird ? communityModel.thirdMentionIds
+                          : isSecondary ? communityModel.secondaryMentionIds
+                          : communityModel.mentionIds,
+                    ),
                   ],
                   if (media.isNotEmpty && !isThird) ...[
                     Space(SPACE_SMALL),
@@ -119,12 +127,14 @@ class CommunityPrincipalContent extends StatelessWidget {
                     CommunityPrincipalContent(
                       communityModel: communityModel,
                       isSecondary: true,
+                      mentionsEnabled: mentionsEnabled,
                       showBorder: showBorder,
                     ),
                   if (isSecondary && communityModel.thirdId.isNotEmpty)
                     CommunityPrincipalContent(
                       communityModel: communityModel,
                       isThird: true,
+                      mentionsEnabled: mentionsEnabled,
                       showBorder: true,
                     ),
                 ],
@@ -156,8 +166,10 @@ class CommunityPrincipalContent extends StatelessWidget {
 
 class CommunityClickableText extends StatefulWidget {
   final String text;
+  final Map<String, String> mentionIds;
+  final bool mentionsEnabled;
 
-  CommunityClickableText({super.key, required this.text});
+  CommunityClickableText({super.key, required this.text, this.mentionIds = const {}, this.mentionsEnabled = true});
 
   @override
   State<CommunityClickableText> createState() => CommunityClickableTextState();
@@ -165,6 +177,25 @@ class CommunityClickableText extends StatefulWidget {
 
 class CommunityClickableTextState extends State<CommunityClickableText> {
   final List<TapGestureRecognizer> recognizers = [];
+
+  List<TextSpan> mentionSpans({required String text}) {
+    final List<TextSpan> spans = CommunityMentionController.spans(text: text);
+    for (int i = 0; i < spans.length; i++) {
+      final TextSpan span = spans[i];
+      final String token = span.text ?? '';
+      final String? id = widget.mentionIds[token];
+      if (!widget.mentionsEnabled || id == null || id.isEmpty || span.style == null) continue;
+      final CommunityProfileCallback? callback = token.startsWith('#')
+          ? PizzacornCommunityConfig.onTapEntityMention
+          : PizzacornCommunityConfig.onTapUserMention;
+      if (callback == null) continue;
+      final TapGestureRecognizer recognizer = TapGestureRecognizer()
+        ..onTap = () { callback(context, id); };
+      recognizers.add(recognizer);
+      spans[i] = TextSpan(text: token, style: span.style, recognizer: recognizer);
+    }
+    return spans;
+  }
 
   @override
   void dispose() {
@@ -191,11 +222,21 @@ class CommunityClickableTextState extends State<CommunityClickableText> {
         .allMatches(widget.text)
         .toList();
     int lastMatchEnd = 0;
+    final List<RegExpMatch> mentions = CommunityMentionController.mentionExpression
+        .allMatches(widget.text).toList();
 
     for (int i = 0; i < matches.length; i++) {
       final RegExpMatch match = matches[i];
+      bool overlapsMention = false;
+      for (int j = 0; j < mentions.length; j++) {
+        if (match.start < mentions[j].end && match.end > mentions[j].start) {
+          overlapsMention = true;
+          break;
+        }
+      }
+      if (overlapsMention) continue;
       if (match.start > lastMatchEnd) {
-        spans.addAll(CommunityMentionController.spans(
+        spans.addAll(mentionSpans(
           text: widget.text.substring(lastMatchEnd, match.start),
         ));
       }
@@ -213,7 +254,7 @@ class CommunityClickableTextState extends State<CommunityClickableText> {
       lastMatchEnd = match.end;
     }
     if (lastMatchEnd < widget.text.length) {
-      spans.addAll(CommunityMentionController.spans(
+      spans.addAll(mentionSpans(
         text: widget.text.substring(lastMatchEnd),
       ));
     }

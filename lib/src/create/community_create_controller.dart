@@ -5,12 +5,14 @@ class CommunityCreateState {
   final String isError;
   final List<XFile> images;
   final CommunityModel? quotePost;
+  final String selectedFilter;
 
   CommunityCreateState({
     this.isLoading = false,
     this.isError = '',
     this.images = const [],
     this.quotePost,
+    this.selectedFilter = '',
   });
 
   CommunityCreateState copyWith({
@@ -18,12 +20,14 @@ class CommunityCreateState {
     String? isError,
     List<XFile>? images,
     CommunityModel? quotePost,
+    String? selectedFilter,
   }) {
     return CommunityCreateState(
       isLoading: isLoading ?? this.isLoading,
       isError: isError ?? this.isError,
       images: images ?? this.images,
       quotePost: quotePost ?? this.quotePost,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
     );
   }
 }
@@ -42,7 +46,17 @@ class CommunityCreateController
   CommunityCreateState build(CommunityModel? arg) {
     textController = CommunityMentionController();
     ref.onDispose(textController.dispose);
-    return CommunityCreateState(quotePost: arg);
+    final List<String> filters = PizzacornCommunityConfig.filters;
+    final String initialFilter = arg != null && filters.contains(arg.filter)
+        ? arg.filter
+        : filters.isEmpty
+            ? ''
+            : filters.first;
+    return CommunityCreateState(quotePost: arg, selectedFilter: initialFilter);
+  }
+
+  void selectFilter({required String filter}) {
+    state = state.copyWith(selectedFilter: filter);
   }
 
   Future<void> pickImages() async {
@@ -79,13 +93,22 @@ class CommunityCreateController
         communityModel: communityModel,
         isQuote: state.quotePost != null,
       );
-      ref
-          .read(communityControllerProvider.notifier)
-          .updateLocally(
-            communityModel: saved,
-            params: communityParams,
-            isAddition: true,
-          );
+      final CommunityController communityController = ref.read(
+        communityControllerProvider.notifier,
+      );
+      communityController.updateLocally(
+        communityModel: saved,
+        params: communityParams,
+        isAddition: true,
+      );
+      final String activeFilter = ref.read(communityControllerProvider).selectedFilter;
+      if (activeFilter.isNotEmpty && activeFilter == saved.filter) {
+        communityController.updateLocally(
+          communityModel: saved,
+          params: communityParamsForFilter(filter: activeFilter),
+          isAddition: true,
+        );
+      }
       if (context.mounted) goBack(context);
     } catch (error) {
       state = state.copyWith(isError: error.toString());
@@ -102,14 +125,18 @@ class CommunityCreateController
     if (quotePost == null) {
       return CommunityModel(
         type: CommunityType.post,
+        filter: state.selectedFilter,
         text: text,
+        mentionIds: textController.mentionIds,
         media: media,
         createdAt: DateTime.now(),
       );
     }
     return CommunityModel(
       type: CommunityType.quote,
+      filter: state.selectedFilter,
       text: text,
+        mentionIds: textController.mentionIds,
       media: media,
       secondaryId: quotePost.id,
       secondaryUserId: quotePost.userId,
@@ -117,6 +144,7 @@ class CommunityCreateController
       secondaryUserUsername: quotePost.userUsername,
       secondaryUserImage: quotePost.userImage,
       secondaryText: quotePost.text,
+      secondaryMentionIds: quotePost.mentionIds,
       secondaryMedia: quotePost.media,
       secondaryType: quotePost.type.name,
       createdAt: DateTime.now(),

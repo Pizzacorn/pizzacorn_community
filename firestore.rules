@@ -1,0 +1,135 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isCommunityOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    function changesOneCounter() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'likesCount',
+          'commentsCount',
+          'repostCount',
+          'updatedAt'
+        ])
+        && (
+          (
+            request.resource.data.likesCount != resource.data.likesCount
+            && request.resource.data.likesCount in [
+              resource.data.likesCount + 1,
+              resource.data.likesCount - 1
+            ]
+          )
+          || (
+            request.resource.data.commentsCount != resource.data.commentsCount
+            && request.resource.data.commentsCount in [
+              resource.data.commentsCount + 1,
+              resource.data.commentsCount - 1
+            ]
+          )
+          || (
+            request.resource.data.repostCount != resource.data.repostCount
+            && request.resource.data.repostCount in [
+              resource.data.repostCount + 1,
+              resource.data.repostCount - 1
+            ]
+          )
+        )
+        && (
+          request.resource.data.updatedAt == resource.data.updatedAt
+          || request.resource.data.updatedAt == request.time
+        );
+    }
+
+    // El plugin no debe leer ni escribir Firestore directamente.
+    // Todas las operaciones sensibles pasan por Cloud Functions con Admin SDK.
+    match /wordpressPluginSites/{siteId} {
+      allow read, write: if false;
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /wordpressPluginUsage/{usageId} {
+      allow read, write: if false;
+    }
+
+    match /wordpressGenerationLogs/{logId} {
+      allow read, write: if false;
+    }
+
+    match /wordpressGenerator/{document=**} {
+      allow read, write: if false;
+    }
+
+    match /Temas/{topicId} {
+      allow read, write: if false;
+    }
+
+    match /stripeWebhookEvents/{eventId} {
+      allow read, write: if false;
+    }
+
+    // Comunidad: usuarios autenticados pueden leer el muro.
+    // Solo el autor puede editar o borrar su publicación.
+    match /Community/{postId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.id == postId
+        && request.resource.data.type in ['post', 'comment', 'quote', 'repost']
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if (
+          isCommunityOwner()
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.id == resource.data.id
+          && request.resource.data.createdAt == resource.data.createdAt
+        ) || (isSignedIn() && changesOneCounter());
+      allow delete: if isCommunityOwner();
+
+      match /Likes/{userId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+          && userId == request.auth.uid
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+        allow delete: if isSignedIn() && userId == request.auth.uid;
+        allow update: if false;
+      }
+
+      match /Reposts/{userId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+          && userId == request.auth.uid
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.type == 'repost'
+          && request.resource.data.createdAt == request.time;
+        allow delete: if isSignedIn() && userId == request.auth.uid;
+        allow update: if false;
+      }
+    }
+
+    // Los reportes se pueden enviar, pero solo los administra el backend.
+    match /Reports/{reportId} {
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.id == reportId
+        && request.resource.data.reason is string
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
+    // Fallback estricto. Si este Firestore se comparte con otras apps,
+    // mueve sus reglas especificas encima de este bloque antes de desplegar.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

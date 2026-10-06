@@ -39,7 +39,12 @@ class PizzacornCommunityConfig {
   static int paginationSize = 20;
   static String title = 'Comunidad';
   static String? backgroundAsset;
+  static List<String> filters = const [];
+  static Color? filterColor;
+  static Color? filterTextColor;
   static CommunityProfileCallback? onOpenProfile;
+  static CommunityProfileCallback? onTapUserMention;
+  static CommunityProfileCallback? onTapEntityMention;
   static CommunityNotificationCallback? onSendNotification;
   static CommunityReportCallback? onReport;
   static CommunitySearchUsersCallback? onSearchUsers;
@@ -48,6 +53,17 @@ class PizzacornCommunityConfig {
   static String? usersNameField;
   static String? usersImageField;
   static CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal;
+  static String? entitiesCollection;
+  static String? entitiesNicknameField;
+  static String? entitiesNameField;
+  static String? entitiesImageField;
+  static CommunitySearchUsersCallback? onSearchEntities;
+  static CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal;
+  static Color usersMentionColor = Colors.blue;
+  static Color entitiesMentionColor = Colors.blue;
+
+  static bool get canSearchEntities => onSearchEntities != null ||
+      (entitiesCollection != null && entitiesNicknameField != null);
 
   static bool get canSearchUsers => onSearchUsers != null ||
       (usersCollection != null && usersNicknameField != null);
@@ -63,7 +79,12 @@ void ConfigurePizzacornCommunity({
   int paginationSize = 20,
   String title = 'Comunidad',
   String? backgroundAsset,
+  List<String> filters = const [],
+  Color? filterColor,
+  Color? filterTextColor,
   CommunityProfileCallback? onOpenProfile,
+  CommunityProfileCallback? onTapUserMention,
+  CommunityProfileCallback? onTapEntityMention,
   CommunityNotificationCallback? onSendNotification,
   CommunityReportCallback? onReport,
   CommunitySearchUsersCallback? onSearchUsers,
@@ -72,7 +93,20 @@ void ConfigurePizzacornCommunity({
   String? usersNameField,
   String? usersImageField,
   CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal,
+  String? entitiesCollection,
+  String? entitiesNicknameField,
+  String? entitiesNameField,
+  String? entitiesImageField,
+  CommunitySearchUsersCallback? onSearchEntities,
+  CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal,
+  Color usersMentionColor = Colors.blue,
+  Color entitiesMentionColor = Colors.blue,
 }) {
+  if ((entitiesCollection != null || entitiesNicknameField != null) &&
+      (entitiesCollection == null || entitiesCollection.trim().isEmpty ||
+       entitiesNicknameField == null || entitiesNicknameField.trim().isEmpty)) {
+    throw ArgumentError('Indica entitiesCollection y entitiesNicknameField juntos.');
+  }
   if ((usersCollection != null || usersNicknameField != null) &&
       (usersCollection == null || usersCollection.trim().isEmpty ||
        usersNicknameField == null || usersNicknameField.trim().isEmpty)) {
@@ -84,7 +118,12 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.paginationSize = paginationSize;
   PizzacornCommunityConfig.title = title;
   PizzacornCommunityConfig.backgroundAsset = backgroundAsset;
+  PizzacornCommunityConfig.filters = List.unmodifiable(filters);
+  PizzacornCommunityConfig.filterColor = filterColor;
+  PizzacornCommunityConfig.filterTextColor = filterTextColor;
   PizzacornCommunityConfig.onOpenProfile = onOpenProfile;
+  PizzacornCommunityConfig.onTapUserMention = onTapUserMention;
+  PizzacornCommunityConfig.onTapEntityMention = onTapEntityMention;
   PizzacornCommunityConfig.onSendNotification = onSendNotification;
   PizzacornCommunityConfig.onReport = onReport;
   PizzacornCommunityConfig.onSearchUsers = onSearchUsers;
@@ -93,4 +132,12 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.usersNameField = usersNameField;
   PizzacornCommunityConfig.usersImageField = usersImageField;
   PizzacornCommunityConfig.usersSearchMode = usersSearchMode;
+  PizzacornCommunityConfig.entitiesCollection = entitiesCollection;
+  PizzacornCommunityConfig.entitiesNicknameField = entitiesNicknameField;
+  PizzacornCommunityConfig.entitiesNameField = entitiesNameField;
+  PizzacornCommunityConfig.entitiesImageField = entitiesImageField;
+  PizzacornCommunityConfig.onSearchEntities = onSearchEntities;
+  PizzacornCommunityConfig.entitiesSearchMode = entitiesSearchMode;
+  PizzacornCommunityConfig.usersMentionColor = usersMentionColor;
+  PizzacornCommunityConfig.entitiesMentionColor = entitiesMentionColor;
 }

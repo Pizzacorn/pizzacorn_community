@@ -59,6 +59,7 @@ class CommunityWidget extends StatelessWidget {
                 CommunityPrincipalContent(
                   communityModel: communityModel,
                   noNavigation: noNavigation,
+                  mentionsEnabled: !isQuotePreview,
                   isSecondary: isRepost,
                   showBorder: !isRepost,
                 ),

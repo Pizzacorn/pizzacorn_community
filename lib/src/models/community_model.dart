@@ -8,12 +8,16 @@ class CommunityModel {
   final String userName;
   final String userUsername;
   final String userImage;
+  final Map<String, String> mentionIds;
+  final Map<String, String> secondaryMentionIds;
+  final Map<String, String> thirdMentionIds;
   final String text;
   final List<String> media;
   final int likesCount;
   final int commentsCount;
   final int repostCount;
   final CommunityType type;
+  final String filter;
   final String secondaryId;
   final String secondaryUserId;
   final String secondaryUserName;
@@ -41,12 +45,16 @@ class CommunityModel {
     this.userName = '',
     this.userUsername = '',
     this.userImage = '',
+    this.mentionIds = const {},
+    this.secondaryMentionIds = const {},
+    this.thirdMentionIds = const {},
     this.text = '',
     this.media = const [],
     this.likesCount = 0,
     this.commentsCount = 0,
     this.repostCount = 0,
     this.type = CommunityType.post,
+    this.filter = '',
     this.secondaryId = '',
     this.secondaryUserId = '',
     this.secondaryUserName = '',
@@ -77,6 +85,9 @@ class CommunityModel {
       userName: json['userName'] ?? '',
       userUsername: json['userUsername'] ?? '',
       userImage: json['userImage'] ?? '',
+      mentionIds: json['mentionIds'] is Map ? Map<String, String>.from(json['mentionIds']) : {},
+      secondaryMentionIds: json['secondaryMentionIds'] is Map ? Map<String, String>.from(json['secondaryMentionIds']) : {},
+      thirdMentionIds: json['thirdMentionIds'] is Map ? Map<String, String>.from(json['thirdMentionIds']) : {},
       text: json['text'] ?? '',
       media: json['media'] != null ? List<String>.from(json['media']) : [],
       likesCount: json['likesCount'] ?? 0,
@@ -86,6 +97,7 @@ class CommunityModel {
         (communityType) => communityType.name == json['type'],
         orElse: () => CommunityType.post,
       ),
+      filter: json['filter'] ?? '',
       secondaryId: json['secondaryId'] ?? '',
       secondaryUserId: json['secondaryUserId'] ?? '',
       secondaryUserName: json['secondaryUserName'] ?? '',
@@ -120,12 +132,16 @@ class CommunityModel {
       'userName': userName,
       'userUsername': userUsername,
       'userImage': userImage,
+      'mentionIds': mentionIds,
+      'secondaryMentionIds': secondaryMentionIds,
+      'thirdMentionIds': thirdMentionIds,
       'text': text,
       'media': media,
       'likesCount': likesCount,
       'commentsCount': commentsCount,
       'repostCount': repostCount,
       'type': type.name,
+      'filter': filter,
       'secondaryId': secondaryId,
       'secondaryUserId': secondaryUserId,
       'secondaryUserName': secondaryUserName,
@@ -170,12 +186,16 @@ class CommunityModel {
     String? userName,
     String? userUsername,
     String? userImage,
+    Map<String, String>? mentionIds,
+    Map<String, String>? secondaryMentionIds,
+    Map<String, String>? thirdMentionIds,
     String? text,
     List<String>? media,
     int? likesCount,
     int? commentsCount,
     int? repostCount,
     CommunityType? type,
+    String? filter,
     String? secondaryId,
     String? secondaryUserId,
     String? secondaryUserName,
@@ -203,12 +223,16 @@ class CommunityModel {
       userName: userName ?? this.userName,
       userUsername: userUsername ?? this.userUsername,
       userImage: userImage ?? this.userImage,
+      mentionIds: mentionIds ?? this.mentionIds,
+      secondaryMentionIds: secondaryMentionIds ?? this.secondaryMentionIds,
+      thirdMentionIds: thirdMentionIds ?? this.thirdMentionIds,
       text: text ?? this.text,
       media: media ?? this.media,
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       repostCount: repostCount ?? this.repostCount,
       type: type ?? this.type,
+      filter: filter ?? this.filter,
       secondaryId: secondaryId ?? this.secondaryId,
       secondaryUserId: secondaryUserId ?? this.secondaryUserId,
       secondaryUserName: secondaryUserName ?? this.secondaryUserName,

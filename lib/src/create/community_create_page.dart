@@ -47,6 +47,30 @@ class CommunityCreatePage extends ConsumerWidget {
                   ),
                 ],
               ),
+              if (PizzacornCommunityConfig.filters.isNotEmpty) ...[
+                Space(SPACE_BIG),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextBody('Añade un filtro', fontWeight: FontWeight.bold),
+                ),
+                Space(SPACE_SMALL),
+                SegmentedControlCustom(
+                  items: PizzacornCommunityConfig.filters,
+                  thumbColor: PizzacornCommunityConfig.filterColor,
+                  activeTextColor: PizzacornCommunityConfig.filterTextColor,
+                  inactiveTextColor: PizzacornCommunityConfig.filterTextColor,
+                  currentIndex: PizzacornCommunityConfig.filters.contains(
+                    state.selectedFilter,
+                  )
+                      ? PizzacornCommunityConfig.filters.indexOf(state.selectedFilter)
+                      : 0,
+                  onValueChanged: (index) {
+                    controller.selectFilter(
+                      filter: PizzacornCommunityConfig.filters[index],
+                    );
+                  },
+                ),
+              ],
               if (state.quotePost != null) ...[
                 Space(SPACE_MEDIUM),
                 IgnorePointer(
@@ -69,25 +93,32 @@ class CommunityCreatePage extends ConsumerWidget {
           ),
         ),
       ),
-      bottomSheet: Padding(
-        padding: PADDING_ALL,
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: controller.pickImages,
-              iconSize: 22,
-              icon: Icon(UIconsPro.regularRounded.picture, color: COLOR_ACCENT),
-            ),
-            Space(SPACE_MEDIUM),
-            Expanded(
-              child: ButtonCustom(
-                text: 'Publicar',
-                onPressed: () => controller.savePost(context: context),
-              ),
-            ),
-          ],
+      bottomSheet: Container(
+        height: 90,
+        decoration: BoxDecoration(
+          color: COLOR_BACKGROUND,
+          border: Border(top: BorderSide(color: COLOR_BORDER))
         ),
-      ),
+        child: Padding(
+          padding: PADDING_ALL,
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: controller.pickImages,
+                iconSize: 22,
+                icon: Icon(UIconsPro.regularRounded.picture, color: COLOR_ACCENT),
+              ),
+              Space(SPACE_MEDIUM),
+              Expanded(
+                child: ButtonCustom(
+                  text: 'Publicar',
+                  onPressed: () => controller.savePost(context: context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
     );
   }
 }

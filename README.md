@@ -61,6 +61,49 @@ respuestas con imagen en `community_comments/{userId}`.
 
 ### Menciones
 
+`@` busca usuarios y `#` busca en una segunda colección independiente. Por ejemplo
+(sustituye los nombres por los campos reales de tu aplicación):
+
+```dart
+ConfigurePizzacornCommunity(
+  currentUser: currentUserModel,
+  usersCollection: 'Users',
+  usersNicknameField: 'email',
+  entitiesCollection: 'Entities',
+  entitiesNicknameField: 'nickname',
+  usersMentionColor: Colors.blue,
+  entitiesMentionColor: Colors.orange,
+);
+```
+
+Los colores controlan el texto y el subrayado en el editor y en las publicaciones.
+Las entidades admiten `entitiesNameField`, `entitiesImageField`,
+`entitiesSearchMode` (normal por defecto) y `onSearchEntities` como alternativa
+a Firestore. Este callback devuelve `CommunityUserModel`, utilizando `username`
+como identificador insertable y `name` e `image` para las sugerencias.
+Cada colección usa sus propios campos y modo de búsqueda, en la base configurada.
+Los filtros de usuario actual y bloqueos solo se aplican a `@`.
+Si no se configura la fuente de entidades, `#` no abre sugerencias.
+Ambos tipos se guardan en `text`. Las menciones seleccionadas guardan además
+`mentionIds` (token completo → ID); las citas/reposts conservan sus mapas en
+`secondaryMentionIds` y `thirdMentionIds`. No se envían notificaciones.
+
+Configura las pulsaciones en lectura desde `ConfigurePizzacornCommunity`:
+
+```dart
+onTapUserMention: (context, userId) async {
+  // Abre el usuario usando su ID.
+},
+onTapEntityMention: (context, entityId) async {
+  // Abre la entidad usando su ID.
+},
+```
+
+No se activan callbacks en el editor ni en previsualizaciones de creación.
+Las publicaciones antiguas o menciones escritas sin seleccionar una sugerencia
+no tienen un ID asociado y permanecen como texto resaltado sin pulsación.
+Las reglas de escritura de la aplicación deben permitir los nuevos mapas.
+
 Indica `usersCollection` y `usersNicknameField` en `ConfigurePizzacornCommunity`
 para activar el selector al escribir `@` en una publicación o cita. Por ejemplo,
 si tu colección se llama `users` y el campo es `nickname`:
@@ -106,8 +149,8 @@ otro usuario solo pueden filtrarse si el callback devuelve `blockedUsers`.
 
 Al seleccionar, se inserta `@username` en el cursor respetando el límite de 250
 caracteres. Las menciones aparecen en azul tanto en el editor como en el muro y
-se guardan dentro de `text`. Esta función no envía notificaciones ni persiste IDs
-de destinatarios; la integración del endpoint queda pendiente.
+se guardan dentro de `text`, con los IDs seleccionados en `mentionIds`.
+La integración del endpoint de notificaciones queda pendiente.
 
 Firebase debe estar inicializado antes de abrir `CommunityPage()`. Para permitir
 la selección de imágenes en iOS, añade `NSPhotoLibraryUsageDescription` en
