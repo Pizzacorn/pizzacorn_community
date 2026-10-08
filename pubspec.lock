@@ -761,10 +761,10 @@ packages:
     dependency: "direct main"
     description:
       name: pizzacorn_ui
-      sha256: "7b9db3ce81b01aed1fb6192bdf7cd911286dfc2ed4b831f95859ddf6e7d1c725"
+      sha256: "6dd4355bf2afa5eb9cf086cd66a8d356cb45021950b552b07d6ff249a2adbedb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.137"
+    version: "0.0.138"
   platform:
     dependency: transitive
     description:

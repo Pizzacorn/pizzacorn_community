@@ -76,6 +76,15 @@ void main() {
     ConfigurePizzacornCommunity();
   });
 
+  test('El filtro de paginación acepta CommunityModel desde el provider dinámico', () {
+    ConfigurePizzacornCommunity(blockedUserIds: ['bloqueado']);
+    final PaginationParams<dynamic> params = communityParamsForFilter();
+
+    expect(params.itemFilter!(CommunityModel(userId: 'visible')), isTrue);
+    expect(params.itemFilter!(CommunityModel(userId: 'bloqueado')), isFalse);
+    ConfigurePizzacornCommunity();
+  });
+
   test('onReportTweet recibe publicación y motivo con prioridad sobre onReport', () async {
     final CommunityModel communityModel = CommunityModel(id: 'post-1');
     final List<String> calls = [];

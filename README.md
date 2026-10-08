@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.11
+  pizzacorn_community: ^0.0.12
 ```
 
 ```dart

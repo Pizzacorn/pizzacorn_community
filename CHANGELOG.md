@@ -1,3 +1,8 @@
+## 0.0.12
+
+- Actualiza `pizzacorn_ui` para corregir el tipo del filtro de publicaciones bloqueadas en la paginación.
+- Añade una prueba de regresión con `CommunityModel` a través del provider dinámico.
+
 ## 0.0.11
 
 - Añade callbacks de menciones con el ID mencionado y el ID de la publicación guardada.
