@@ -53,6 +53,11 @@ class CommunityPrincipalContent extends StatelessWidget {
         : isSecondary
         ? communityModel.secondaryMedia
         : communityModel.media;
+    final List<String> mediaThumbnails = isThird
+        ? communityModel.thirdMediaThumbnails
+        : isSecondary
+        ? communityModel.secondaryMediaThumbnails
+        : communityModel.mediaThumbnails;
 
     return InkWell(
       onTap: () => openDetails(context),
@@ -121,7 +126,7 @@ class CommunityPrincipalContent extends StatelessWidget {
                   ],
                   if (media.isNotEmpty && !isThird) ...[
                     Space(SPACE_SMALL),
-                    buildCommunityImageGrid(context, media: media),
+                    buildCommunityImageGrid(context, media: media, mediaThumbnails: mediaThumbnails),
                   ],
                   if (!isSecondary &&
                       !isThird &&

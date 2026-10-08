@@ -32,6 +32,7 @@ export 'src/widgets/community_widget.dart';
 export 'src/widgets/helpers/action_button.dart';
 export 'src/widgets/helpers/community_actions_row.dart';
 export 'src/widgets/helpers/community_images.dart';
+export 'src/widgets/helpers/community_image_gallery_page.dart';
 export 'src/widgets/helpers/community_principal.dart';
 export 'src/widgets/helpers/community_selected_images.dart';
 export 'src/widgets/helpers/community_time.dart';

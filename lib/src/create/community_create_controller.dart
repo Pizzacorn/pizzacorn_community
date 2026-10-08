@@ -80,14 +80,15 @@ class CommunityCreateController
 
     try {
       state = state.copyWith(isLoading: true, isError: '');
-      final List<String> urls = state.images.isEmpty
-          ? []
+      final CommunityUploadedMedia uploadedMedia = state.images.isEmpty
+          ? CommunityUploadedMedia(media: [], mediaThumbnails: [])
           : await ref
                 .read(communityMediaServiceProvider)
-                .uploadImages(images: state.images, folder: 'community_posts');
+                .uploadImageVariants(images: state.images, folder: 'community_posts');
       final CommunityModel communityModel = buildCommunityModel(
         text: content,
-        media: urls,
+        media: uploadedMedia.media,
+        mediaThumbnails: uploadedMedia.mediaThumbnails,
       );
       final CommunityModel saved = await repository.save(
         communityModel: communityModel,
@@ -120,6 +121,7 @@ class CommunityCreateController
   CommunityModel buildCommunityModel({
     required String text,
     required List<String> media,
+    required List<String> mediaThumbnails,
   }) {
     final CommunityModel? quotePost = state.quotePost;
     if (quotePost == null) {
@@ -129,6 +131,7 @@ class CommunityCreateController
         text: text,
         mentionIds: textController.mentionIds,
         media: media,
+        mediaThumbnails: mediaThumbnails,
         createdAt: DateTime.now(),
       );
     }
@@ -138,6 +141,7 @@ class CommunityCreateController
       text: text,
         mentionIds: textController.mentionIds,
       media: media,
+      mediaThumbnails: mediaThumbnails,
       secondaryId: quotePost.id,
       secondaryUserId: quotePost.userId,
       secondaryUserName: quotePost.userName,
@@ -146,6 +150,7 @@ class CommunityCreateController
       secondaryText: quotePost.text,
       secondaryMentionIds: quotePost.mentionIds,
       secondaryMedia: quotePost.media,
+      secondaryMediaThumbnails: quotePost.mediaThumbnails,
       secondaryType: quotePost.type.name,
       createdAt: DateTime.now(),
     );

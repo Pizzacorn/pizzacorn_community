@@ -176,6 +176,9 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
           secondaryMedia: communityModel.type == CommunityType.repost
               ? communityModel.secondaryMedia
               : communityModel.media,
+          secondaryMediaThumbnails: communityModel.type == CommunityType.repost
+              ? communityModel.secondaryMediaThumbnails
+              : communityModel.mediaThumbnails,
           secondaryType: communityModel.type.name,
           thirdId: communityModel.thirdId,
           thirdUserId: communityModel.thirdUserId,
@@ -185,6 +188,7 @@ class CommunityController extends AutoDisposeNotifier<CommunityState> {
           thirdText: communityModel.thirdText,
           thirdMentionIds: communityModel.thirdMentionIds,
           thirdMedia: communityModel.thirdMedia,
+          thirdMediaThumbnails: communityModel.thirdMediaThumbnails,
         );
         final CommunityModel saved = await repository.save(
           communityModel: repostModel,

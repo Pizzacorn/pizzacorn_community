@@ -61,6 +61,7 @@ class BottomRepost extends ConsumerWidget {
       text: communityModel.secondaryText,
       mentionIds: communityModel.secondaryMentionIds,
       media: communityModel.secondaryMedia,
+      mediaThumbnails: communityModel.secondaryMediaThumbnails,
     );
   }
 }

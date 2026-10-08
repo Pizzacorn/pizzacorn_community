@@ -1,3 +1,9 @@
+## 0.0.14
+
+- Sube una miniatura de cada foto junto a la imagen de buena calidad y usa la miniatura en el muro.
+- Abre las fotos a buena calidad en una galería con navegación por gestos.
+- Conserva la visualización de publicaciones anteriores y las miniaturas en citas y reposts.
+
 ## 0.0.13
 
 - Añade separación entre los filtros y las publicaciones del muro.

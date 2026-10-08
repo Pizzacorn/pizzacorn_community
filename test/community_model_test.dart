@@ -35,6 +35,38 @@ void main() {
     expect(communityModel.createdAt, DateTime(2000));
   });
 
+  test('Conserva miniaturas y abre publicaciones antiguas sin ellas', () {
+    final CommunityModel oldPost = CommunityModel.fromJson({
+      'media': ['full.jpg'],
+    });
+    expect(oldPost.mediaThumbnails, isEmpty);
+
+    final CommunityModel post = oldPost.copyWith(
+      mediaThumbnails: ['small.png'],
+      secondaryMediaThumbnails: ['quoted.png'],
+      thirdMediaThumbnails: ['original.png'],
+    );
+    final CommunityModel restored = CommunityModel.fromJson(post.toJson());
+    expect(restored.media, ['full.jpg']);
+    expect(restored.mediaThumbnails, ['small.png']);
+    expect(restored.secondaryMediaThumbnails, ['quoted.png']);
+    expect(restored.thirdMediaThumbnails, ['original.png']);
+    expect(restored.toJsonUpdate()['mediaThumbnails'], ['small.png']);
+  });
+
+  testWidgets('La galería abre la foto pulsada y cambia con swipe', (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: CommunityImageGalleryPage(
+        media: ['https://example.invalid/one.jpg', 'https://example.invalid/two.jpg'],
+        initialIndex: 1,
+      ),
+    ));
+    expect(find.text('2 / 2'), findsOneWidget);
+    await tester.drag(find.byType(PageView), const Offset(450, 0));
+    await tester.pumpAndSettle();
+    expect(find.text('1 / 2'), findsOneWidget);
+  });
+
   test('IDs bloqueados configurados se suman a los del usuario', () {
     ConfigurePizzacornCommunity(
       currentUser: CommunityUserModel(blockedUsers: ['bloqueado-en-modelo']),

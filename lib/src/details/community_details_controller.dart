@@ -83,11 +83,11 @@ class CommunityDetailsController
 
     try {
       state = state.copyWith(isLoading: true, isError: '');
-      final List<String> urls = state.images.isEmpty
-          ? []
+      final CommunityUploadedMedia uploadedMedia = state.images.isEmpty
+          ? CommunityUploadedMedia(media: [], mediaThumbnails: [])
           : await ref
                 .read(communityMediaServiceProvider)
-                .uploadImages(
+                .uploadImageVariants(
                   images: state.images,
                   folder: 'community_comments',
                 );
@@ -95,7 +95,8 @@ class CommunityDetailsController
         communityModel: CommunityModel(
           type: CommunityType.comment,
           text: text,
-          media: urls,
+          media: uploadedMedia.media,
+          mediaThumbnails: uploadedMedia.mediaThumbnails,
           secondaryId: state.communityModel.id,
           secondaryReplyTo: state.communityModel.userUsername,
           secondaryReplyToId: state.communityModel.userId,

@@ -13,6 +13,7 @@ class CommunityModel {
   final Map<String, String> thirdMentionIds;
   final String text;
   final List<String> media;
+  final List<String> mediaThumbnails;
   final int likesCount;
   final int commentsCount;
   final int repostCount;
@@ -25,6 +26,7 @@ class CommunityModel {
   final String secondaryUserImage;
   final String secondaryText;
   final List<String> secondaryMedia;
+  final List<String> secondaryMediaThumbnails;
   final String secondaryReplyTo;
   final String secondaryReplyToId;
   final String secondaryType;
@@ -35,6 +37,7 @@ class CommunityModel {
   final String thirdUserImage;
   final String thirdText;
   final List<String> thirdMedia;
+  final List<String> thirdMediaThumbnails;
   final bool hidden;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -50,6 +53,7 @@ class CommunityModel {
     this.thirdMentionIds = const {},
     this.text = '',
     this.media = const [],
+    this.mediaThumbnails = const [],
     this.likesCount = 0,
     this.commentsCount = 0,
     this.repostCount = 0,
@@ -62,6 +66,7 @@ class CommunityModel {
     this.secondaryUserImage = '',
     this.secondaryText = '',
     this.secondaryMedia = const [],
+    this.secondaryMediaThumbnails = const [],
     this.secondaryReplyTo = '',
     this.secondaryReplyToId = '',
     this.secondaryType = '',
@@ -72,6 +77,7 @@ class CommunityModel {
     this.thirdUserImage = '',
     this.thirdText = '',
     this.thirdMedia = const [],
+    this.thirdMediaThumbnails = const [],
     this.hidden = false,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -90,6 +96,7 @@ class CommunityModel {
       thirdMentionIds: json['thirdMentionIds'] is Map ? Map<String, String>.from(json['thirdMentionIds']) : {},
       text: json['text'] ?? '',
       media: json['media'] != null ? List<String>.from(json['media']) : [],
+      mediaThumbnails: json['mediaThumbnails'] != null ? List<String>.from(json['mediaThumbnails']) : [],
       likesCount: json['likesCount'] ?? 0,
       commentsCount: json['commentsCount'] ?? 0,
       repostCount: json['repostCount'] ?? 0,
@@ -107,6 +114,9 @@ class CommunityModel {
       secondaryMedia: json['secondaryMedia'] != null
           ? List<String>.from(json['secondaryMedia'])
           : [],
+      secondaryMediaThumbnails: json['secondaryMediaThumbnails'] != null
+          ? List<String>.from(json['secondaryMediaThumbnails'])
+          : [],
       secondaryReplyTo: json['secondaryReplyTo'] ?? '',
       secondaryReplyToId: json['secondaryReplyToId'] ?? '',
       secondaryType: json['secondaryType'] ?? '',
@@ -118,6 +128,9 @@ class CommunityModel {
       thirdText: json['thirdText'] ?? '',
       thirdMedia: json['thirdMedia'] != null
           ? List<String>.from(json['thirdMedia'])
+          : [],
+      thirdMediaThumbnails: json['thirdMediaThumbnails'] != null
+          ? List<String>.from(json['thirdMediaThumbnails'])
           : [],
       hidden: json['hidden'] ?? false,
       createdAt: parseDate(json['createdAt']),
@@ -137,6 +150,7 @@ class CommunityModel {
       'thirdMentionIds': thirdMentionIds,
       'text': text,
       'media': media,
+      'mediaThumbnails': mediaThumbnails,
       'likesCount': likesCount,
       'commentsCount': commentsCount,
       'repostCount': repostCount,
@@ -149,6 +163,7 @@ class CommunityModel {
       'secondaryUserImage': secondaryUserImage,
       'secondaryText': secondaryText,
       'secondaryMedia': secondaryMedia,
+      'secondaryMediaThumbnails': secondaryMediaThumbnails,
       'secondaryReplyTo': secondaryReplyTo,
       'secondaryReplyToId': secondaryReplyToId,
       'secondaryType': secondaryType,
@@ -159,6 +174,7 @@ class CommunityModel {
       'thirdUserImage': thirdUserImage,
       'thirdText': thirdText,
       'thirdMedia': thirdMedia,
+      'thirdMediaThumbnails': thirdMediaThumbnails,
       'hidden': hidden,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -191,6 +207,7 @@ class CommunityModel {
     Map<String, String>? thirdMentionIds,
     String? text,
     List<String>? media,
+    List<String>? mediaThumbnails,
     int? likesCount,
     int? commentsCount,
     int? repostCount,
@@ -203,6 +220,7 @@ class CommunityModel {
     String? secondaryUserImage,
     String? secondaryText,
     List<String>? secondaryMedia,
+    List<String>? secondaryMediaThumbnails,
     String? secondaryReplyTo,
     String? secondaryReplyToId,
     String? secondaryType,
@@ -213,6 +231,7 @@ class CommunityModel {
     String? thirdUserImage,
     String? thirdText,
     List<String>? thirdMedia,
+    List<String>? thirdMediaThumbnails,
     bool? hidden,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -228,6 +247,7 @@ class CommunityModel {
       thirdMentionIds: thirdMentionIds ?? this.thirdMentionIds,
       text: text ?? this.text,
       media: media ?? this.media,
+      mediaThumbnails: mediaThumbnails ?? this.mediaThumbnails,
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       repostCount: repostCount ?? this.repostCount,
@@ -241,6 +261,7 @@ class CommunityModel {
       secondaryUserImage: secondaryUserImage ?? this.secondaryUserImage,
       secondaryText: secondaryText ?? this.secondaryText,
       secondaryMedia: secondaryMedia ?? this.secondaryMedia,
+      secondaryMediaThumbnails: secondaryMediaThumbnails ?? this.secondaryMediaThumbnails,
       secondaryReplyTo: secondaryReplyTo ?? this.secondaryReplyTo,
       secondaryReplyToId: secondaryReplyToId ?? this.secondaryReplyToId,
       secondaryType: secondaryType ?? this.secondaryType,
@@ -251,6 +272,7 @@ class CommunityModel {
       thirdUserImage: thirdUserImage ?? this.thirdUserImage,
       thirdText: thirdText ?? this.thirdText,
       thirdMedia: thirdMedia ?? this.thirdMedia,
+      thirdMediaThumbnails: thirdMediaThumbnails ?? this.thirdMediaThumbnails,
       hidden: hidden ?? this.hidden,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
