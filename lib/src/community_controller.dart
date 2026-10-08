@@ -12,6 +12,8 @@ PaginationParams<CommunityModel> communityParamsForFilter({String filter = ''}) 
     databaseName: PizzacornCommunityConfig.databaseName,
     limit: PizzacornCommunityConfig.paginationSize,
     fromJson: (data) => CommunityModel.fromJson(data),
+    itemFilter: (communityModel) =>
+        !PizzacornCommunityConfig.isPostBlocked(communityModel),
     query: (query) {
       final filteredQuery = filter.isEmpty
           ? query

@@ -763,15 +763,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.10"
+    version: "0.0.11"
   pizzacorn_ui:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: pizzacorn_ui
-      sha256: d70dd405d81b3c8eafa1c02f0bc62acec596de8512d7f711530d5b5b1e8b23c8
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.127"
+      path: "../../pizzacorn_ui"
+      relative: true
+    source: path
+    version: "0.0.137"
   platform:
     dependency: transitive
     description:

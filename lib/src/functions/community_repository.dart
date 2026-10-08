@@ -50,11 +50,38 @@ class CommunityRepository {
 
     batch.set(reference, readyToSave.toJsonCreate());
     await batch.commit();
+    await notifyMentions(communityModel: readyToSave);
     await PizzacornCommunityConfig.onSendNotification?.call(
       CommunityNotificationType.post,
       readyToSave,
     );
     return readyToSave;
+  }
+
+  Future<void> notifyMentions({required CommunityModel communityModel}) async {
+    final Set<String> notifiedUsers = {};
+    final Set<String> notifiedEntities = {};
+    final List<MapEntry<String, String>> mentions =
+        communityModel.mentionIds.entries.toList();
+    for (int i = 0; i < mentions.length; i++) {
+      final MapEntry<String, String> mention = mentions[i];
+      final String mentionedId = mention.value.trim();
+      if (mentionedId.isEmpty) continue;
+      CommunityMentionedCallback? callback;
+      if (mention.key.startsWith('@') && notifiedUsers.add(mentionedId)) {
+        callback = PizzacornCommunityConfig.onUserMentioned;
+      } else if (mention.key.startsWith('#') &&
+          notifiedEntities.add(mentionedId)) {
+        callback = PizzacornCommunityConfig.onEntitieMentioned;
+      }
+      if (callback == null) continue;
+      try {
+        await callback(mentionedId, communityModel.id);
+      } catch (error) {
+        // 📣 La publicación ya está guardada aunque falle una notificación.
+        debugPrint('No se pudo notificar la mención $mentionedId: $error');
+      }
+    }
   }
 
   void applyRepostLogic({required WriteBatch batch, required String parentId}) {
@@ -185,7 +212,22 @@ class CommunityRepository {
       'reason': reason,
       'createdAt': FieldValue.serverTimestamp(),
     });
-    await PizzacornCommunityConfig.onReport?.call(communityModel, reason);
+    await notifyReport(communityModel: communityModel, reason: reason);
+  }
+
+  Future<void> notifyReport({
+    required CommunityModel communityModel,
+    required String reason,
+  }) async {
+    final CommunityReportCallback? callback =
+        PizzacornCommunityConfig.onReportTweet ?? PizzacornCommunityConfig.onReport;
+    if (callback == null) return;
+    try {
+      await callback(communityModel, reason);
+    } catch (error) {
+      // 📣 El reporte ya está guardado aunque falle la acción de la aplicación.
+      debugPrint('No se pudo procesar el callback del reporte: $error');
+    }
   }
 
   void ensureAuthenticated() {

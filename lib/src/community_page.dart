@@ -101,7 +101,7 @@ class CommunityPage extends ConsumerWidget {
                                 itemCount: posts.length,
                                 itemBuilder: (context, index) {
                                   final CommunityModel communityModel = posts[index];
-                                  if (currentUser.blockedUsers.contains(communityModel.userId)) {
+                                  if (PizzacornCommunityConfig.isPostBlocked(communityModel)) {
                                     return SizedBox.shrink();
                                   }
                                   return CommunityWidget(
@@ -133,7 +133,7 @@ class CommunityPage extends ConsumerWidget {
                       ),
                     )
                   else SliverPadding(
-                    padding: PADDING_ALL,
+                    padding: PADDING,
                     sliver: SliverListCustom<CommunityModel>(
                       params: params,
                       itemPlaceholder: CommunityModel(),
@@ -145,9 +145,7 @@ class CommunityPage extends ConsumerWidget {
                         ),
                       ),
                       itemBuilder: (communityModel) {
-                        if (currentUser.blockedUsers.contains(
-                          communityModel.userId,
-                        )) {
+                        if (PizzacornCommunityConfig.isPostBlocked(communityModel)) {
                           return SizedBox.shrink();
                         }
                         return CommunityWidget(

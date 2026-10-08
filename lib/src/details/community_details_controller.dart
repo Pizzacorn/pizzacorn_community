@@ -45,6 +45,8 @@ class CommunityDetailsController
       databaseName: PizzacornCommunityConfig.databaseName,
       limit: PizzacornCommunityConfig.paginationSize,
       fromJson: (data) => CommunityModel.fromJson(data),
+      itemFilter: (communityModel) =>
+          !PizzacornCommunityConfig.isPostBlocked(communityModel),
       query: (query) => query
           .where('hidden', isEqualTo: false)
           .where('type', isEqualTo: CommunityType.comment.name)

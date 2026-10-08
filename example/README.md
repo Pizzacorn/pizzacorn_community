@@ -1,10 +1,11 @@
 # Community · App de pruebas
 
-App Android/iOS que usa `pizzacorn_community` mediante `path: ../`.
-Los cambios en la librería se prueban aquí sin publicar en pub.dev.
+App Android/iOS que usa `pizzacorn_community` mediante `path: ../` y el
+checkout hermano `pizzacorn_ui` mediante `path: ../../pizzacorn_ui`.
+Los cambios en ambas librerías se prueban aquí sin publicar en pub.dev.
 
 El ejemplo fija `uicons_pro` a `1.1.0` mediante `dependency_overrides`: la versión
-`1.2.0` renombra iconos que todavía utiliza `pizzacorn_ui 0.0.127`. Esta excepción
+`1.2.0` renombra iconos que todavía utiliza `pizzacorn_ui`. Esta excepción
 solo afecta a la app de pruebas; no cambia las dependencias publicadas del paquete.
 
 ## Configuración pendiente

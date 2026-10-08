@@ -92,6 +92,66 @@ void main() {
     await tester.pumpWidget(SizedBox());
   });
 
+  testWidgets('Los callbacks nuevos reciben el ID al pulsar una mención', (tester) async {
+    final List<String> received = [];
+    ConfigurePizzacornCommunity(
+      onUserMentionPressed: (context, id) { received.add('user:$id'); },
+      onEntitieMentionPressed: (context, id) { received.add('entity:$id'); },
+      onTapUserMention: (context, id) { received.add('old-user:$id'); },
+      onTapEntityMention: (context, id) { received.add('old-entity:$id'); },
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: CommunityClickableText(
+      text: '@ana #entidad', mentionIds: {'@ana': 'uid', '#entidad': 'eid'},
+    ))));
+    final RichText richText = tester.widget<RichText>(find.descendant(
+      of: find.byType(CommunityClickableText), matching: find.byType(RichText),
+    ));
+    final List<InlineSpan> spans = (richText.text as TextSpan).children!;
+    ((spans[1] as TextSpan).recognizer as TapGestureRecognizer).onTap!();
+    ((spans[3] as TextSpan).recognizer as TapGestureRecognizer).onTap!();
+    expect(received, ['user:uid', 'entity:eid']);
+    await tester.pumpWidget(SizedBox());
+  });
+
+  test('Las menciones notifican una vez por ID sin repetir las citas', () async {
+    final List<String> notified = [];
+    ConfigurePizzacornCommunity(
+      onUserMentioned: (id, postId) { notified.add('user:$id:$postId'); },
+      onEntitieMentioned: (id, postId) { notified.add('entity:$id:$postId'); },
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await CommunityRepository().notifyMentions(
+      communityModel: CommunityModel(
+        id: 'post-1',
+        mentionIds: {
+          '@ana': 'uid',
+          '@alias': 'uid',
+          '#entidad': 'eid',
+          '#otra': 'eid-2',
+        },
+        secondaryMentionIds: {'@anterior': 'old-uid'},
+      ),
+    );
+    expect(notified, ['user:uid:post-1', 'entity:eid:post-1', 'entity:eid-2:post-1']);
+  });
+
+  test('Un fallo de notificación no impide procesar las demás menciones', () async {
+    final List<String> notified = [];
+    ConfigurePizzacornCommunity(
+      onUserMentioned: (id, postId) { throw StateError('Notificación no disponible'); },
+      onEntitieMentioned: (id, postId) { notified.add('$id:$postId'); },
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await CommunityRepository().notifyMentions(
+      communityModel: CommunityModel(id: 'post-2', mentionIds: {
+        '@ana': 'uid',
+        '#entidad': 'eid',
+      }),
+    );
+    expect(notified, ['eid:post-2']);
+  });
+
   testWidgets('Cambia de usuarios a entidades sin mezclar sugerencias', (tester) async {
     final CommunityMentionController controller = CommunityMentionController();
     addTearDown(controller.dispose);

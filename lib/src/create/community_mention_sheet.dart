@@ -56,7 +56,7 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
         final CommunityUserModel userModel = results[i];
         final String username = userModel.username.replaceFirst(RegExp(r'^[@#]'), '');
         if (userModel.id.isEmpty || (!widget.isEntity && (userModel.id == currentUserModel.id ||
-            currentUserModel.blockedUsers.contains(userModel.id) ||
+            PizzacornCommunityConfig.isUserBlocked(userModel.id) ||
             userModel.blockedUsers.contains(currentUserModel.id))) ||
             !CommunityMentionController.usernameExpression.hasMatch(username) ||
             !ids.add(userModel.id)) continue;

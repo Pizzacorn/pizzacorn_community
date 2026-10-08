@@ -1,3 +1,10 @@
+## 0.0.11
+
+- Añade callbacks de menciones con el ID mencionado y el ID de la publicación guardada.
+- Añade `onReportTweet` después de guardar denuncias y conserva `onReport` como alternativa.
+- Permite pasar IDs bloqueados a la configuración y completa las páginas del muro con publicaciones visibles.
+- Actualiza la app de pruebas para consumir el checkout local de `pizzacorn_ui`.
+
 ## 0.0.10
 
 - Añade `onTapUser` para abrir perfiles desde las fotos, conservando `onOpenProfile` como alternativa.

@@ -20,6 +20,9 @@ class CommunityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (PizzacornCommunityConfig.isPostBlocked(communityModel)) {
+      return SizedBox.shrink();
+    }
     final bool isRepost = communityModel.type == CommunityType.repost;
     final bool isComment = communityModel.type == CommunityType.comment;
     final CommunityUserModel currentUser = PizzacornCommunityConfig.currentUser;

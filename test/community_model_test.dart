@@ -34,4 +34,73 @@ void main() {
     expect(communityModel.media, isEmpty);
     expect(communityModel.createdAt, DateTime(2000));
   });
+
+  test('IDs bloqueados configurados se suman a los del usuario', () {
+    ConfigurePizzacornCommunity(
+      currentUser: CommunityUserModel(blockedUsers: ['bloqueado-en-modelo']),
+      blockedUserIds: ['bloqueado-en-configuracion'],
+    );
+
+    expect(PizzacornCommunityConfig.isUserBlocked('bloqueado-en-modelo'), isTrue);
+    expect(PizzacornCommunityConfig.isUserBlocked('bloqueado-en-configuracion'), isTrue);
+    expect(PizzacornCommunityConfig.isUserBlocked('visible'), isFalse);
+
+    ConfigurePizzacornCommunity();
+    expect(PizzacornCommunityConfig.isUserBlocked('bloqueado-en-configuracion'), isFalse);
+  });
+
+  test('Oculta publicaciones propias, compartidas y citadas de bloqueados', () {
+    ConfigurePizzacornCommunity(blockedUserIds: ['bloqueado']);
+
+    expect(PizzacornCommunityConfig.isPostBlocked(
+      CommunityModel(userId: 'bloqueado'),
+    ), isTrue);
+    expect(PizzacornCommunityConfig.isPostBlocked(
+      CommunityModel(
+        userId: 'visible',
+        type: CommunityType.repost,
+        secondaryUserId: 'bloqueado',
+      ),
+    ), isTrue);
+    expect(PizzacornCommunityConfig.isPostBlocked(
+      CommunityModel(
+        userId: 'visible',
+        type: CommunityType.quote,
+        thirdUserId: 'bloqueado',
+      ),
+    ), isTrue);
+    expect(PizzacornCommunityConfig.isPostBlocked(
+      CommunityModel(userId: 'visible'),
+    ), isFalse);
+
+    ConfigurePizzacornCommunity();
+  });
+
+  test('onReportTweet recibe publicación y motivo con prioridad sobre onReport', () async {
+    final CommunityModel communityModel = CommunityModel(id: 'post-1');
+    final List<String> calls = [];
+    ConfigurePizzacornCommunity(
+      onReport: (postModel, reason) => calls.add('anterior:$reason'),
+      onReportTweet: (postModel, reason) {
+        expect(identical(postModel, communityModel), isTrue);
+        calls.add('nuevo:$reason');
+      },
+    );
+
+    await CommunityRepository().notifyReport(
+      communityModel: communityModel,
+      reason: 'Spam',
+    );
+    expect(calls, ['nuevo:Spam']);
+
+    ConfigurePizzacornCommunity(
+      onReport: (postModel, reason) => calls.add('anterior:$reason'),
+    );
+    await CommunityRepository().notifyReport(
+      communityModel: communityModel,
+      reason: 'Contenido inapropiado',
+    );
+    expect(calls.last, 'anterior:Contenido inapropiado');
+    ConfigurePizzacornCommunity();
+  });
 }

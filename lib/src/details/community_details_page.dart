@@ -14,6 +14,18 @@ class CommunityDetailsPage extends ConsumerWidget {
       communityDetailsProvider(communityModel).notifier,
     );
 
+    if (PizzacornCommunityConfig.isPostBlocked(state.communityModel)) {
+      return Scaffold(
+        backgroundColor: PizzacornCommunityConfig.backgroundSecondaryColor,
+        appBar: AppBarBack(
+          context: context,
+          title: 'Publicación',
+          color: PizzacornCommunityConfig.backgroundColor,
+        ),
+        body: Center(child: TextBody('Publicación no disponible.')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: PizzacornCommunityConfig.backgroundSecondaryColor,
       resizeToAvoidBottomInset: true,

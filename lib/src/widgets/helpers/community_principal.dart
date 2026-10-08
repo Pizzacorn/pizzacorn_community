@@ -189,8 +189,10 @@ class CommunityClickableTextState extends State<CommunityClickableText> {
       final String? id = widget.mentionIds[token];
       if (!widget.mentionsEnabled || id == null || id.isEmpty || span.style == null) continue;
       final CommunityProfileCallback? callback = token.startsWith('#')
-          ? PizzacornCommunityConfig.onTapEntityMention
-          : PizzacornCommunityConfig.onTapUserMention;
+          ? PizzacornCommunityConfig.onEntitieMentionPressed ??
+              PizzacornCommunityConfig.onTapEntityMention
+          : PizzacornCommunityConfig.onUserMentionPressed ??
+              PizzacornCommunityConfig.onTapUserMention;
       if (callback == null) continue;
       final TapGestureRecognizer recognizer = TapGestureRecognizer()
         ..onTap = () { callback(context, id); };

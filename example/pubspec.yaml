@@ -1,7 +1,7 @@
 name: community_example
 description: App de pruebas de pizzacorn_community.
 publish_to: none
-version: 1.0.0+1
+version: 1.0.1+2
 environment:
   sdk: ^3.9.2
 dependencies:
@@ -13,7 +13,10 @@ dependencies:
   firebase_auth: ^6.7.0
   flutter_riverpod: ^2.6.1
 dependency_overrides:
-  # La versión 1.2.0 renombra iconos utilizados por pizzacorn_ui 0.0.127.
+  # 🧪 La app de pruebas utiliza los cambios locales de pizzacorn_ui.
+  pizzacorn_ui:
+    path: ../../pizzacorn_ui
+  # La versión 1.2.0 renombra iconos utilizados por pizzacorn_ui.
   uicons_pro: 1.1.0
 dev_dependencies:
   flutter_test:

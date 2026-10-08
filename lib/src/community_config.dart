@@ -2,6 +2,8 @@ import 'package:pizzacorn_community/pizzacorn_community.dart';
 
 typedef CommunityProfileCallback =
     FutureOr<void> Function(BuildContext context, String userId);
+typedef CommunityMentionedCallback =
+    FutureOr<void> Function(String mentionedId, String postId);
 typedef CommunityNotificationCallback =
     FutureOr<void> Function(
       CommunityNotificationType notificationType,
@@ -35,6 +37,7 @@ class CommunityUserModel {
 
 class PizzacornCommunityConfig {
   static CommunityUserModel currentUser = CommunityUserModel();
+  static List<String> blockedUserIds = const [];
   static String? databaseName;
   static int paginationSize = 20;
   static bool showSearch = false;
@@ -52,8 +55,13 @@ class PizzacornCommunityConfig {
   static CommunityProfileCallback? onTapUser;
   static CommunityProfileCallback? onTapUserMention;
   static CommunityProfileCallback? onTapEntityMention;
+  static CommunityProfileCallback? onUserMentionPressed;
+  static CommunityProfileCallback? onEntitieMentionPressed;
+  static CommunityMentionedCallback? onUserMentioned;
+  static CommunityMentionedCallback? onEntitieMentioned;
   static CommunityNotificationCallback? onSendNotification;
   static CommunityReportCallback? onReport;
+  static CommunityReportCallback? onReportTweet;
   static CommunitySearchUsersCallback? onSearchUsers;
   static String? usersCollection;
   static String? usersNicknameField;
@@ -75,6 +83,16 @@ class PizzacornCommunityConfig {
   static bool get canSearchUsers => onSearchUsers != null ||
       (usersCollection != null && usersNicknameField != null);
 
+  static bool isUserBlocked(String userId) => userId.isNotEmpty &&
+      (blockedUserIds.contains(userId) || currentUser.blockedUsers.contains(userId));
+
+  static bool isPostBlocked(CommunityModel communityModel) =>
+      isUserBlocked(communityModel.userId) ||
+      ((communityModel.type == CommunityType.repost ||
+          communityModel.type == CommunityType.quote) &&
+          (isUserBlocked(communityModel.secondaryUserId) ||
+              isUserBlocked(communityModel.thirdUserId)));
+
   static FirebaseFirestore get database {
     return PizzacornPaginationConfig.getFirestore(databaseName: databaseName);
   }
@@ -82,6 +100,7 @@ class PizzacornCommunityConfig {
 
 void ConfigurePizzacornCommunity({
   CommunityUserModel? currentUser,
+  List<String> blockedUserIds = const [],
   String? databaseName,
   int paginationSize = 20,
   bool showSearch = false,
@@ -96,8 +115,13 @@ void ConfigurePizzacornCommunity({
   CommunityProfileCallback? onTapUser,
   CommunityProfileCallback? onTapUserMention,
   CommunityProfileCallback? onTapEntityMention,
+  CommunityProfileCallback? onUserMentionPressed,
+  CommunityProfileCallback? onEntitieMentionPressed,
+  CommunityMentionedCallback? onUserMentioned,
+  CommunityMentionedCallback? onEntitieMentioned,
   CommunityNotificationCallback? onSendNotification,
   CommunityReportCallback? onReport,
+  CommunityReportCallback? onReportTweet,
   CommunitySearchUsersCallback? onSearchUsers,
   String? usersCollection,
   String? usersNicknameField,
@@ -124,6 +148,7 @@ void ConfigurePizzacornCommunity({
     throw ArgumentError('Indica usersCollection y usersNicknameField juntos.');
   }
   PizzacornCommunityConfig.currentUser = currentUser ?? CommunityUserModel();
+  PizzacornCommunityConfig.blockedUserIds = List.unmodifiable(blockedUserIds);
   PizzacornCommunityConfig.databaseName =
       PizzacornPaginationConfig.sanitizeDatabaseName(databaseName);
   PizzacornCommunityConfig.paginationSize = paginationSize;
@@ -140,8 +165,13 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.onTapUser = onTapUser;
   PizzacornCommunityConfig.onTapUserMention = onTapUserMention;
   PizzacornCommunityConfig.onTapEntityMention = onTapEntityMention;
+  PizzacornCommunityConfig.onUserMentionPressed = onUserMentionPressed;
+  PizzacornCommunityConfig.onEntitieMentionPressed = onEntitieMentionPressed;
+  PizzacornCommunityConfig.onUserMentioned = onUserMentioned;
+  PizzacornCommunityConfig.onEntitieMentioned = onEntitieMentioned;
   PizzacornCommunityConfig.onSendNotification = onSendNotification;
   PizzacornCommunityConfig.onReport = onReport;
+  PizzacornCommunityConfig.onReportTweet = onReportTweet;
   PizzacornCommunityConfig.onSearchUsers = onSearchUsers;
   PizzacornCommunityConfig.usersCollection = usersCollection;
   PizzacornCommunityConfig.usersNicknameField = usersNicknameField;

@@ -8,7 +8,7 @@ Añade la dependencia y exporta la librería desde el barrel de tu app:
 
 ```yaml
 dependencies:
-  pizzacorn_community: ^0.0.10
+  pizzacorn_community: ^0.0.11
 ```
 
 ```dart
@@ -26,15 +26,38 @@ ConfigurePizzacornCommunity(
     image: USER.image,
     blockedUsers: USER.blockedUsers,
   ),
+  blockedUserIds: const ['otro-usuario-bloqueado'],
   onTapUser: (context, userId) async {
     // Abre aquí el perfil propio de tu aplicación.
   },
 );
 ```
 
+`blockedUserIds` es opcional y se suma a `currentUser.blockedUsers`. Oculta las
+publicaciones de esos autores en el muro, la búsqueda y las respuestas, además
+de sus publicaciones compartidas o citadas. También excluye esos usuarios de
+las sugerencias de menciones. Actualiza la configuración cuando cambie la lista.
+El muro y las respuestas leen lotes adicionales para completar cada página con
+publicaciones visibles. La búsqueda filtra después de su límite Enterprise y
+puede mostrar menos resultados que el límite configurado.
+
 `onTapUser` se ejecuta al tocar la foto del autor en el muro, los detalles o
 el editor de una publicación. Si ya usas `onOpenProfile`, seguirá funcionando
 como alternativa cuando `onTapUser` no esté configurado.
+
+Para actuar después de guardar una denuncia en `Reports`, configura:
+
+```dart
+onReportTweet: (communityModel, reason) async {
+  // Procesa la denuncia en el backend de tu aplicación.
+},
+```
+
+El callback recibe la publicación denunciada y el motivo seleccionado. Se
+ejecuta después de guardar el reporte. `onReport` sigue disponible como
+alternativa si no se configura `onReportTweet`. Un error del callback se registra
+sin presentar la denuncia ya guardada como fallida. El paquete no oculta la
+publicación automáticamente: esa decisión corresponde a la moderación de la app.
 
 Antes de mostrar el muro, inicializa los datos de fecha de `intl` para la locale
 española usada por las fechas de las publicaciones:
@@ -125,20 +148,36 @@ Los filtros de usuario actual y bloqueos solo se aplican a `@`.
 Si no se configura la fuente de entidades, `#` no abre sugerencias.
 Ambos tipos se guardan en `text`. Las menciones seleccionadas guardan además
 `mentionIds` (token completo → ID); las citas/reposts conservan sus mapas en
-`secondaryMentionIds` y `thirdMentionIds`. No se envían notificaciones.
+`secondaryMentionIds` y `thirdMentionIds`.
 
-Configura las pulsaciones en lectura desde `ConfigurePizzacornCommunity`:
+Configura las notificaciones y las pulsaciones en lectura desde
+`ConfigurePizzacornCommunity`:
 
 ```dart
-onTapUserMention: (context, userId) async {
+onUserMentioned: (userId, postId) async {
+  // Envía la notificación al usuario mencionado.
+},
+onEntitieMentioned: (entityId, postId) async {
+  // Envía la notificación a la entidad mencionada.
+},
+onUserMentionPressed: (context, userId) async {
   // Abre el usuario usando su ID.
 },
-onTapEntityMention: (context, entityId) async {
+onEntitieMentionPressed: (context, entityId) async {
   // Abre la entidad usando su ID.
 },
 ```
 
-No se activan callbacks de menciones en el editor ni en previsualizaciones de creación.
+Los callbacks `onUserMentioned` y `onEntitieMentioned` reciben el ID mencionado
+y el ID de la publicación guardada, en ese orden. Se ejecutan después de
+guardar una publicación o cita, una vez por ID único presente en el texto nuevo.
+Un fallo al enviar una notificación se registra sin marcar la publicación como
+fallida. El paquete no envía notificaciones por sí mismo. Los callbacks anteriores
+`onTapUserMention` y `onTapEntityMention` siguen funcionando si no se configuran
+los nuevos callbacks de pulsación.
+
+No se activan callbacks de pulsación de menciones en el editor ni en
+previsualizaciones de creación.
 Las publicaciones antiguas o menciones escritas sin seleccionar una sugerencia
 no tienen un ID asociado y permanecen como texto resaltado sin pulsación.
 Las reglas de escritura de la aplicación deben permitir los nuevos mapas.
