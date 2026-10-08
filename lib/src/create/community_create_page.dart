@@ -50,7 +50,7 @@ class CommunityCreatePage extends ConsumerWidget {
                             onTapUser(context, currentUser.id);
                           },
                   ),
-                  Space(SPACE_MEDIUM),
+                  Space(SPACE_SMALLEST),
                   Expanded(
                     child: CommunityMentionField(
                       controller: controller.textController,
@@ -95,9 +95,12 @@ class CommunityCreatePage extends ConsumerWidget {
               ],
               if (state.images.isNotEmpty) ...[
                 Space(SPACE_MEDIUM),
-                CommunitySelectedImages(
-                  images: state.images,
-                  onRemoveImage: controller.removeImage,
+                Padding(
+                  padding: EdgeInsets.only(left: 45 + SPACE_SMALLEST),
+                  child: CommunitySelectedImages(
+                    images: state.images,
+                    onRemoveImage: controller.removeImage,
+                  ),
                 ),
               ],
             ],

@@ -62,6 +62,7 @@ class CommunityPage extends ConsumerWidget {
                   );
                 },
               ),
+            if (filters.isNotEmpty) Space(SPACE_SMALL),
             Expanded(
               child: CustomScrollView(
                 physics: AlwaysScrollableScrollPhysics(),

@@ -1,3 +1,8 @@
+## 0.0.13
+
+- Añade separación entre los filtros y las publicaciones del muro.
+- Acerca el campo de creación al avatar y alinea lateralmente las imágenes adjuntas con el campo.
+
 ## 0.0.12
 
 - Actualiza `pizzacorn_ui` para corregir el tipo del filtro de publicaciones bloqueadas en la paginación.
