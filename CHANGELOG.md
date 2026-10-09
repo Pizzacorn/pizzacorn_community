@@ -1,3 +1,7 @@
+## 0.0.18
+
+- Actualiza pizzacorn_ui a la versión 0.0.140 y adapta el aviso del muro a DisclaimerWidget.
+
 ## 0.0.17
 
 - Muestra el estado de verificación del autor desde una colección y un campo configurables, con borde de foto y color del tick personalizables.

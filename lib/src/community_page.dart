@@ -95,7 +95,7 @@ class CommunityPage extends ConsumerWidget {
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: PADDING_ALL,
-                        child: disclaimerWidget(
+                        child: DisclaimerWidget(
                           text: PizzacornCommunityConfig.disclaimerText,
                         ),
                       ),
