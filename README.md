@@ -80,6 +80,19 @@ CommunityPage(
 `floatingButtonHeight` define la separación inferior del botón para publicar.
 Su valor por defecto es `0`.
 
+Para explicar el contenido del muro encima de la lista, configura:
+
+```dart
+ConfigurePizzacornCommunity(
+  currentUser: currentUserModel,
+  showDisclaimer: true,
+  disclaimerText: 'Información importante sobre las publicaciones.',
+);
+```
+
+`showDisclaimer` es `false` por defecto. El aviso también se oculta si el texto
+está vacío y aparece tanto en el muro como durante la búsqueda.
+
 Para mostrar categorías en el muro y al publicar, configura los filtros y sus
 colores opcionales:
 
@@ -131,12 +144,33 @@ ConfigurePizzacornCommunity(
   currentUser: currentUserModel,
   usersCollection: 'Users',
   usersNicknameField: 'email',
+  usersVerifyField: 'verify',
   entitiesCollection: 'Entities',
   entitiesNicknameField: 'nickname',
   usersMentionColor: Colors.blue,
   entitiesMentionColor: Colors.orange,
 );
 ```
+
+Para mostrar el tick de verificado desde `USER.verify`, configura
+`usersCollection: 'USER'` y `usersVerifyField: 'verify'`. También puedes definir
+`verifiedBorderColor`, `verifiedBorderWidth` y `verifiedTickBackgroundColor`:
+
+```dart
+ConfigurePizzacornCommunity(
+  usersCollection: 'USER',
+  usersVerifyField: 'verify',
+  verifiedBorderColor: Colors.blue,
+  verifiedBorderWidth: 2,
+  verifiedTickBackgroundColor: Colors.blue,
+);
+```
+
+El borde corresponde a la foto de perfil y el fondo al relleno del tick. Se
+aplican solo a usuarios verificados. El campo de verificación debe ser
+booleano y el ID del documento de usuario debe coincidir con `userId` de la
+publicación. La librería solo lee este valor; la aplicación administra quién
+puede modificarlo. Sin configurar `usersVerifyField`, no se muestra el tick.
 
 Los colores controlan el texto y el subrayado en el editor y en las publicaciones.
 Las entidades admiten `entitiesNameField`, `entitiesImageField`,

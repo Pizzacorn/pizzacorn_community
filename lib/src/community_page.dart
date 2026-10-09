@@ -90,6 +90,16 @@ class CommunityPage extends ConsumerWidget {
                       await ref.read(paginationProvider(params).notifier).refresh();
                     },
                   ),
+                  if (PizzacornCommunityConfig.showDisclaimer &&
+                      PizzacornCommunityConfig.disclaimerText.trim().isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: PADDING_ALL,
+                        child: disclaimerWidget(
+                          text: PizzacornCommunityConfig.disclaimerText,
+                        ),
+                      ),
+                    ),
                   if (searchResults != null)
                     searchResults.when(
                       data: (posts) => SliverPadding(
@@ -164,7 +174,7 @@ class CommunityPage extends ConsumerWidget {
                       },
                     ),
                   ),
-                  SliverToBoxAdapter(child: Space(SPACE_BIGGER)),
+                  SliverToBoxAdapter(child: SizedBox(height: 120)),
                 ],
               ),
             ),

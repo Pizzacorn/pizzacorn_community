@@ -1,3 +1,8 @@
+## 0.0.17
+
+- Muestra el estado de verificación del autor desde una colección y un campo configurables, con borde de foto y color del tick personalizables.
+- Permite mostrar un aviso configurable encima del muro y reserva 120 px al final de la lista para barras inferiores.
+
 ## 0.0.16
 
 - Oculta la acción de comentar dentro del detalle para evitar abrir la misma publicación repetidamente.

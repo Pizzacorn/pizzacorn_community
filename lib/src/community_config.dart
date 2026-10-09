@@ -42,6 +42,8 @@ class PizzacornCommunityConfig {
   static int paginationSize = 20;
   static int? maxPostImages;
   static bool showSearch = false;
+  static bool showDisclaimer = false;
+  static String disclaimerText = '';
   static String title = 'Comunidad';
   static String? backgroundAsset;
   static Color? customBackgroundColor;
@@ -71,6 +73,10 @@ class PizzacornCommunityConfig {
   static String? usersNicknameField;
   static String? usersNameField;
   static String? usersImageField;
+  static String? usersVerifyField;
+  static Color? verifiedBorderColor;
+  static double verifiedBorderWidth = 2;
+  static Color? verifiedTickBackgroundColor;
   static CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal;
   static String? entitiesCollection;
   static String? entitiesNicknameField;
@@ -109,6 +115,8 @@ void ConfigurePizzacornCommunity({
   int paginationSize = 20,
   int? maxPostImages,
   bool showSearch = false,
+  bool showDisclaimer = false,
+  String disclaimerText = '',
   String title = 'Comunidad',
   String? backgroundAsset,
   Color? backgroundColor,
@@ -135,6 +143,10 @@ void ConfigurePizzacornCommunity({
   String? usersNicknameField,
   String? usersNameField,
   String? usersImageField,
+  String? usersVerifyField,
+  Color? verifiedBorderColor,
+  double verifiedBorderWidth = 2,
+  Color? verifiedTickBackgroundColor,
   CommunityUsersSearchMode usersSearchMode = CommunityUsersSearchMode.normal,
   String? entitiesCollection,
   String? entitiesNicknameField,
@@ -147,6 +159,10 @@ void ConfigurePizzacornCommunity({
 }) {
   if (maxPostImages != null && maxPostImages < 1) {
     throw ArgumentError.value(maxPostImages, 'maxPostImages', 'Debe ser mayor que cero.');
+  }
+  if (verifiedBorderWidth < 0) {
+    throw ArgumentError.value(verifiedBorderWidth, 'verifiedBorderWidth',
+        'No puede ser negativo.');
   }
   if ((entitiesCollection != null || entitiesNicknameField != null) &&
       (entitiesCollection == null || entitiesCollection.trim().isEmpty ||
@@ -165,6 +181,8 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.paginationSize = paginationSize;
   PizzacornCommunityConfig.maxPostImages = maxPostImages;
   PizzacornCommunityConfig.showSearch = showSearch;
+  PizzacornCommunityConfig.showDisclaimer = showDisclaimer;
+  PizzacornCommunityConfig.disclaimerText = disclaimerText;
   PizzacornCommunityConfig.title = title;
   PizzacornCommunityConfig.backgroundAsset = backgroundAsset;
   PizzacornCommunityConfig.customBackgroundColor = backgroundColor;
@@ -192,6 +210,10 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.usersNicknameField = usersNicknameField;
   PizzacornCommunityConfig.usersNameField = usersNameField;
   PizzacornCommunityConfig.usersImageField = usersImageField;
+  PizzacornCommunityConfig.usersVerifyField = usersVerifyField;
+  PizzacornCommunityConfig.verifiedBorderColor = verifiedBorderColor;
+  PizzacornCommunityConfig.verifiedBorderWidth = verifiedBorderWidth;
+  PizzacornCommunityConfig.verifiedTickBackgroundColor = verifiedTickBackgroundColor;
   PizzacornCommunityConfig.usersSearchMode = usersSearchMode;
   PizzacornCommunityConfig.entitiesCollection = entitiesCollection;
   PizzacornCommunityConfig.entitiesNicknameField = entitiesNicknameField;

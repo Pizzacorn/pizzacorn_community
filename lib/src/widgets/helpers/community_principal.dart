@@ -1,6 +1,25 @@
 import 'package:pizzacorn_community/pizzacorn_community.dart';
 
-class CommunityPrincipalContent extends StatelessWidget {
+final communityVerifiedProvider = StreamProvider.autoDispose.family<bool, (String, String, String, String?)>((ref, userSource) {
+  return PizzacornPaginationConfig
+      .getFirestore(databaseName: userSource.$4)
+      .collection(userSource.$1)
+      .doc(userSource.$2)
+      .snapshots()
+      .map((document) {
+        final Map<String, dynamic>? data = document.data();
+        if (data == null) return false;
+        Object? value = data;
+        final List<String> parts = userSource.$3.split('.');
+        for (int i = 0; i < parts.length; i++) {
+          if (value is! Map) return false;
+          value = value[parts[i]];
+        }
+        return value == true;
+      });
+});
+
+class CommunityPrincipalContent extends ConsumerWidget {
   final CommunityModel communityModel;
   final bool noNavigation;
   final bool isSecondary;
@@ -19,7 +38,7 @@ class CommunityPrincipalContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final String userImage = isThird
         ? communityModel.thirdUserImage
         : isSecondary
@@ -40,6 +59,17 @@ class CommunityPrincipalContent extends StatelessWidget {
         : isSecondary
         ? communityModel.secondaryUserId
         : communityModel.userId;
+    final String? usersCollection = PizzacornCommunityConfig.usersCollection;
+    final String? usersVerifyField = PizzacornCommunityConfig.usersVerifyField;
+    final bool isVerified = userId.isNotEmpty &&
+        usersCollection != null && usersCollection.isNotEmpty &&
+        usersVerifyField != null && usersVerifyField.isNotEmpty &&
+        ref.watch(communityVerifiedProvider((
+          usersCollection,
+          userId,
+          usersVerifyField,
+          PizzacornCommunityConfig.databaseName,
+        ))).valueOrNull == true;
     final CommunityProfileCallback? onTapUser =
         PizzacornCommunityConfig.onTapUser ??
         PizzacornCommunityConfig.onOpenProfile;
@@ -87,7 +117,12 @@ class CommunityPrincipalContent extends StatelessWidget {
               size: 40,
               singleBorder: true,
               innerBorderWidth: 0,
-              outerBorderWidth: 0,
+              outerBorderWidth: isVerified
+                  ? PizzacornCommunityConfig.verifiedBorderWidth
+                  : 0,
+              outerBorderColor: isVerified
+                  ? PizzacornCommunityConfig.verifiedBorderColor ?? COLOR_INFO
+                  : null,
               onPressed: onTapUser == null || userId.isEmpty
                   ? null
                   : () => onTapUser(context, userId),
@@ -106,6 +141,12 @@ class CommunityPrincipalContent extends StatelessWidget {
                           maxlines: 1,
                         ),
                       ),
+                      if (isVerified) ...[
+                        Space(SPACE_SMALLEST),
+                        Icon(Icons.verified, size: 17,
+                            color: PizzacornCommunityConfig.verifiedTickBackgroundColor ?? COLOR_INFO,
+                            semanticLabel: 'Perfil verificado'),
+                      ],
                       if (userUsername.isNotEmpty) ...[
                         Space(SPACE_SMALLEST),
                         Flexible(
