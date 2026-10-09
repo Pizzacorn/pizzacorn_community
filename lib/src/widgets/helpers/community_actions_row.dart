@@ -3,11 +3,13 @@ import 'package:pizzacorn_community/pizzacorn_community.dart';
 class CommunityActionsRow extends ConsumerStatefulWidget {
   final CommunityModel communityModel;
   final PaginationParams<CommunityModel> params;
+  final bool showCommentAction;
 
   CommunityActionsRow({
     super.key,
     required this.communityModel,
     required this.params,
+    this.showCommentAction = true,
   });
 
   @override
@@ -73,16 +75,12 @@ class CommunityActionsRowState extends ConsumerState<CommunityActionsRow> {
             color: isLiked ? Colors.redAccent : COLOR_SUBTEXT,
             onTap: toggleLike,
           ),
-          CommunityActionButton(
-            icon: UIconsPro.regularRounded.comment,
-            label: '${counts['commentsCount'] ?? 0}',
-            onTap: () {
-              goTo(
-                context,
-                CommunityDetailsPage(communityModel: widget.communityModel),
-              );
-            },
-          ),
+          if (widget.showCommentAction)
+            CommunityActionButton(
+              icon: UIconsPro.regularRounded.comment,
+              label: '${counts['commentsCount'] ?? 0}',
+              onTap: openComments,
+            ),
           CommunityActionButton(
             icon: UIconsPro.regularRounded.arrows_retweet,
             label: '${counts['repostCount'] ?? 0}',
@@ -103,6 +101,19 @@ class CommunityActionsRowState extends ConsumerState<CommunityActionsRow> {
         ],
       ),
     );
+  }
+
+  Future<void> openComments() async {
+    CommunityModel targetModel = widget.communityModel;
+    if (targetModel.type == CommunityType.repost) {
+      if (targetModel.secondaryId.isEmpty) return;
+      targetModel = await CommunityRepository().getById(
+        id: targetModel.secondaryId,
+      );
+    }
+    if (targetModel.id.isNotEmpty && mounted) {
+      goTo(context, CommunityDetailsPage(communityModel: targetModel));
+    }
   }
 
   Future<void> toggleLike() async {

@@ -96,6 +96,7 @@ class CommunityWidget extends StatelessWidget {
                 child: CommunityActionsRow(
                   communityModel: communityModel,
                   params: params,
+                  showCommentAction: !noNavigation,
                 ),
               ),
           ],

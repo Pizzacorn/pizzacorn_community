@@ -1,3 +1,8 @@
+## 0.0.16
+
+- Oculta la acción de comentar dentro del detalle para evitar abrir la misma publicación repetidamente.
+- Abre los comentarios de la publicación original al pulsar comentar en un repost.
+
 ## 0.0.15
 
 - Permite mostrar la chip del filtro de cada publicación, configurar su color y ocultar filtros concretos.
