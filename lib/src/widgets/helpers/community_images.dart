@@ -10,13 +10,24 @@ Widget buildCommunityImageGrid(
 
   Widget imageAt(int index) => InkWell(
     onTap: () => goTo(context, CommunityImageGalleryPage(media: media, initialIndex: index)),
-    child: ImageCustom(
-      imageUrl: index < mediaThumbnails.length && mediaThumbnails[index].isNotEmpty
-          ? mediaThumbnails[index]
-          : media[index],
-      width: double.infinity,
-      height: double.infinity,
-      fit: BoxFit.cover,
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        ImageCustom(
+          imageUrl: index < mediaThumbnails.length && mediaThumbnails[index].isNotEmpty
+              ? mediaThumbnails[index]
+              : media[index],
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        if (index == 3 && media.length > 4)
+          Container(
+            color: Colors.black.withValues(alpha: 0.55),
+            alignment: Alignment.center,
+            child: TextBig('+${media.length - 4}', color: Colors.white),
+          ),
+      ],
     ),
   );
 

@@ -1,3 +1,9 @@
+## 0.0.15
+
+- Permite mostrar la chip del filtro de cada publicación, configurar su color y ocultar filtros concretos.
+- Permite limitar las imágenes de una publicación desde la configuración y avisa al superar el máximo.
+- Muestra `+N` sobre la cuarta imagen del grid cuando quedan más imágenes en la galería.
+
 ## 0.0.14
 
 - Sube una miniatura de cada foto junto a la imagen de buena calidad y usa la miniatura en el muro.

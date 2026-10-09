@@ -58,6 +58,12 @@ class CommunityPrincipalContent extends StatelessWidget {
         : isSecondary
         ? communityModel.secondaryMediaThumbnails
         : communityModel.mediaThumbnails;
+    final String visibleFilter = !isSecondary && !isThird &&
+            PizzacornCommunityConfig.showFilterChips &&
+            communityModel.filter.trim().isNotEmpty &&
+            !PizzacornCommunityConfig.hiddenFilterChips.contains(communityModel.filter)
+        ? communityModel.filter
+        : '';
 
     return InkWell(
       onTap: () => openDetails(context),
@@ -114,6 +120,24 @@ class CommunityPrincipalContent extends StatelessWidget {
                       ],
                     ],
                   ),
+                  if (visibleFilter.isNotEmpty) ...[
+                    Space(SPACE_SMALLEST),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SPACE_SMALL,
+                        vertical: SPACE_SMALLEST,
+                      ),
+                      decoration: BoxDecoration(
+                        color: PizzacornCommunityConfig.filterChipColors[visibleFilter] ??
+                            COLOR_ACCENT,
+                        borderRadius: BorderRadius.circular(RADIUS),
+                      ),
+                      child: TextCaption(
+                        visibleFilter,
+                        color: COLOR_TEXT_BUTTONS,
+                      ),
+                    ),
+                  ],
                   if (text.isNotEmpty) ...[
                     Space(SPACE_SMALLEST),
                     CommunityClickableText(

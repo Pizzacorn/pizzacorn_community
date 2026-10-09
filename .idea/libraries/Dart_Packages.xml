@@ -686,6 +686,7 @@
           <value>
             <list>
               <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/pizzacorn_ui-0.0.127/lib" />
+              <option value="$PROJECT_DIR$/../pizzacorn_ui/lib" />
             </list>
           </value>
         </entry>
@@ -1261,6 +1262,7 @@
       <root url="file://$USER_HOME$/Documents/flutter/packages/flutter_localizations/lib" />
       <root url="file://$USER_HOME$/Documents/flutter/packages/flutter_test/lib" />
       <root url="file://$USER_HOME$/Documents/flutter/packages/flutter_web_plugins/lib" />
+      <root url="file://$PROJECT_DIR$/../pizzacorn_ui/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

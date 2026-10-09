@@ -103,6 +103,10 @@ class CommunityCreatePage extends ConsumerWidget {
                   ),
                 ),
               ],
+              if (state.isError.isNotEmpty) ...[
+                Space(SPACE_SMALL),
+                TextCaption(state.isError, color: COLOR_ERROR),
+              ],
             ],
           ),
         ),

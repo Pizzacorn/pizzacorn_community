@@ -40,6 +40,7 @@ class PizzacornCommunityConfig {
   static List<String> blockedUserIds = const [];
   static String? databaseName;
   static int paginationSize = 20;
+  static int? maxPostImages;
   static bool showSearch = false;
   static String title = 'Comunidad';
   static String? backgroundAsset;
@@ -51,6 +52,9 @@ class PizzacornCommunityConfig {
   static List<String> filters = const [];
   static Color? filterColor;
   static Color? filterTextColor;
+  static bool showFilterChips = false;
+  static Map<String, Color> filterChipColors = const {};
+  static List<String> hiddenFilterChips = const [];
   static CommunityProfileCallback? onOpenProfile;
   static CommunityProfileCallback? onTapUser;
   static CommunityProfileCallback? onTapUserMention;
@@ -103,6 +107,7 @@ void ConfigurePizzacornCommunity({
   List<String> blockedUserIds = const [],
   String? databaseName,
   int paginationSize = 20,
+  int? maxPostImages,
   bool showSearch = false,
   String title = 'Comunidad',
   String? backgroundAsset,
@@ -111,6 +116,9 @@ void ConfigurePizzacornCommunity({
   List<String> filters = const [],
   Color? filterColor,
   Color? filterTextColor,
+  bool showFilterChips = false,
+  Map<String, Color> filterChipColors = const {},
+  List<String> hiddenFilterChips = const [],
   CommunityProfileCallback? onOpenProfile,
   CommunityProfileCallback? onTapUser,
   CommunityProfileCallback? onTapUserMention,
@@ -137,6 +145,9 @@ void ConfigurePizzacornCommunity({
   Color usersMentionColor = Colors.blue,
   Color entitiesMentionColor = Colors.blue,
 }) {
+  if (maxPostImages != null && maxPostImages < 1) {
+    throw ArgumentError.value(maxPostImages, 'maxPostImages', 'Debe ser mayor que cero.');
+  }
   if ((entitiesCollection != null || entitiesNicknameField != null) &&
       (entitiesCollection == null || entitiesCollection.trim().isEmpty ||
        entitiesNicknameField == null || entitiesNicknameField.trim().isEmpty)) {
@@ -152,6 +163,7 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.databaseName =
       PizzacornPaginationConfig.sanitizeDatabaseName(databaseName);
   PizzacornCommunityConfig.paginationSize = paginationSize;
+  PizzacornCommunityConfig.maxPostImages = maxPostImages;
   PizzacornCommunityConfig.showSearch = showSearch;
   PizzacornCommunityConfig.title = title;
   PizzacornCommunityConfig.backgroundAsset = backgroundAsset;
@@ -161,6 +173,9 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.filters = List.unmodifiable(filters);
   PizzacornCommunityConfig.filterColor = filterColor;
   PizzacornCommunityConfig.filterTextColor = filterTextColor;
+  PizzacornCommunityConfig.showFilterChips = showFilterChips;
+  PizzacornCommunityConfig.filterChipColors = Map.unmodifiable(filterChipColors);
+  PizzacornCommunityConfig.hiddenFilterChips = List.unmodifiable(hiddenFilterChips);
   PizzacornCommunityConfig.onOpenProfile = onOpenProfile;
   PizzacornCommunityConfig.onTapUser = onTapUser;
   PizzacornCommunityConfig.onTapUserMention = onTapUserMention;

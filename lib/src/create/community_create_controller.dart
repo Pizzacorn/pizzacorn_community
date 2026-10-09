@@ -60,11 +60,24 @@ class CommunityCreateController
   }
 
   Future<void> pickImages() async {
+    final int? maxPostImages = PizzacornCommunityConfig.maxPostImages;
+    if (maxPostImages != null && state.images.length >= maxPostImages) {
+      state = state.copyWith(isError: 'Máximo $maxPostImages imágenes por publicación.');
+      return;
+    }
     final List<XFile> picked = await ref
         .read(communityMediaServiceProvider)
         .pickImages();
     if (picked.isNotEmpty) {
-      state = state.copyWith(images: [...state.images, ...picked]);
+      final int available = maxPostImages == null
+          ? picked.length
+          : maxPostImages - state.images.length;
+      state = state.copyWith(
+        images: [...state.images, ...picked.take(available)],
+        isError: picked.length > available
+            ? 'Máximo $maxPostImages imágenes por publicación.'
+            : '',
+      );
     }
   }
 
@@ -77,6 +90,11 @@ class CommunityCreateController
   Future<void> savePost({required BuildContext context}) async {
     final String content = textController.text.trim();
     if (content.isEmpty && state.images.isEmpty) return;
+    final int? maxPostImages = PizzacornCommunityConfig.maxPostImages;
+    if (maxPostImages != null && state.images.length > maxPostImages) {
+      state = state.copyWith(isError: 'Máximo $maxPostImages imágenes por publicación.');
+      return;
+    }
 
     try {
       state = state.copyWith(isLoading: true, isError: '');
