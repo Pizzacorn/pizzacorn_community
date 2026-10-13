@@ -103,15 +103,46 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
           itemCount: users.length,
           itemBuilder: (context, index) {
             final CommunityUserModel userModel = users[index];
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ProfileImageCustom(imageUrl: userModel.image, size: 40, singleBorder: true, innerBorderWidth: 0, outerBorderWidth: 0,),
-              title: TextBody(userModel.name),
-              subtitle: TextCaption('${widget.isEntity ? '#' : '@'}${userModel.username.replaceFirst(RegExp(r'^[@#]'), '')}'),
-              onTap: () {
-                if (!widget.onSelected(userModel: userModel)) {
-                  setState(() { isError = 'La mención supera el límite de 250 caracteres.'; });
-                }
+            return Consumer(
+              builder: (context, ref, child) {
+                final bool isVerified = isCommunityVerified(
+                  ref: ref,
+                  id: userModel.id,
+                  isEntity: widget.isEntity,
+                );
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: ProfileImageCustom(
+                    imageUrl: userModel.image,
+                    size: 40,
+                    singleBorder: true,
+                    innerBorderWidth: 0,
+                    outerBorderWidth: isVerified
+                        ? PizzacornCommunityConfig.verifiedBorderWidth
+                        : 0,
+                    outerBorderColor: isVerified
+                        ? PizzacornCommunityConfig.verifiedBorderColor ?? COLOR_INFO
+                        : null,
+                  ),
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(child: TextBody(userModel.name, maxlines: 1)),
+                      if (isVerified) ...[
+                        Space(SPACE_SMALLEST),
+                        Icon(Icons.verified, size: 17,
+                            color: PizzacornCommunityConfig.verifiedTickBackgroundColor ?? COLOR_INFO,
+                            semanticLabel: 'Perfil verificado'),
+                      ],
+                    ],
+                  ),
+                  subtitle: TextCaption('${widget.isEntity ? '#' : '@'}${userModel.username.replaceFirst(RegExp(r'^[@#]'), '')}'),
+                  onTap: () {
+                    if (!widget.onSelected(userModel: userModel)) {
+                      setState(() { isError = 'La mención supera el límite de 250 caracteres.'; });
+                    }
+                  },
+                );
               },
             );
           },

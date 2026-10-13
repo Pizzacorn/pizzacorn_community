@@ -167,17 +167,22 @@ ConfigurePizzacornCommunity(
 ```
 
 El borde corresponde a la foto de perfil y el fondo al relleno del tick. Se
-aplican solo a usuarios verificados. El campo de verificación debe ser
+aplican a usuarios verificados en publicaciones, al crear una publicación y
+en las sugerencias de `@`. El campo de verificación debe ser
 booleano y el ID del documento de usuario debe coincidir con `userId` de la
 publicación. La librería solo lee este valor; la aplicación administra quién
 puede modificarlo. Sin configurar `usersVerifyField`, no se muestra el tick.
 
 Los colores controlan el texto y el subrayado en el editor y en las publicaciones.
 Las entidades admiten `entitiesNameField`, `entitiesImageField`,
+`entitiesVerifyField` para mostrar el mismo verificado en las sugerencias de `#`,
 `entitiesSearchMode` (normal por defecto) y `onSearchEntities` como alternativa
 a Firestore. Este callback devuelve `CommunityUserModel`, utilizando `username`
 como identificador insertable y `name` e `image` para las sugerencias.
 Cada colección usa sus propios campos y modo de búsqueda, en la base configurada.
+El ID de cada entidad debe coincidir con el documento de `entitiesCollection` y
+su campo de verificación debe ser booleano. Si se usa `onSearchEntities`,
+configura también `entitiesCollection` y `entitiesVerifyField` para mostrarlo.
 Los filtros de usuario actual y bloqueos solo se aplican a `@`.
 Si no se configura la fuente de entidades, `#` no abre sugerencias.
 Ambos tipos se guardan en `text`. Las menciones seleccionadas guardan además

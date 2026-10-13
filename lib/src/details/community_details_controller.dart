@@ -36,7 +36,7 @@ final communityDetailsProvider = NotifierProvider.autoDispose
 class CommunityDetailsController
     extends AutoDisposeFamilyNotifier<CommunityDetailsState, CommunityModel> {
   final CommunityRepository repository = CommunityRepository();
-  late TextEditingController textController;
+  late CommunityMentionController textController;
 
   PaginationParams<CommunityModel> get detailsParams {
     return PaginationParams<CommunityModel>(
@@ -57,7 +57,7 @@ class CommunityDetailsController
 
   @override
   CommunityDetailsState build(CommunityModel arg) {
-    textController = TextEditingController();
+    textController = CommunityMentionController();
     ref.onDispose(textController.dispose);
     return CommunityDetailsState(communityModel: arg);
   }
@@ -95,6 +95,7 @@ class CommunityDetailsController
         communityModel: CommunityModel(
           type: CommunityType.comment,
           text: text,
+          mentionIds: textController.mentionIds,
           media: uploadedMedia.media,
           mediaThumbnails: uploadedMedia.mediaThumbnails,
           secondaryId: state.communityModel.id,

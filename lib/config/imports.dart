@@ -4,6 +4,7 @@ export '../src/functions/community_search_repository.dart';
 export '../src/create/community_mention_controller.dart';
 export '../src/create/community_mention_field.dart';
 export '../src/create/community_mention_sheet.dart';
+export '../src/details/community_comment_composer.dart';
 export 'dart:io';
 
 export 'package:cloud_firestore/cloud_firestore.dart' hide kIsWasm;

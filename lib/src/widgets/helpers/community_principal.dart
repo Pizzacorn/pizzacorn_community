@@ -19,6 +19,23 @@ final communityVerifiedProvider = StreamProvider.autoDispose.family<bool, (Strin
       });
 });
 
+bool isCommunityVerified({required WidgetRef ref, required String id, bool isEntity = false}) {
+  final String? collection = isEntity
+      ? PizzacornCommunityConfig.entitiesCollection
+      : PizzacornCommunityConfig.usersCollection;
+  final String? verifyField = isEntity
+      ? PizzacornCommunityConfig.entitiesVerifyField
+      : PizzacornCommunityConfig.usersVerifyField;
+  if (id.isEmpty || collection == null || collection.isEmpty ||
+      verifyField == null || verifyField.isEmpty) return false;
+  return ref.watch(communityVerifiedProvider((
+    collection,
+    id,
+    verifyField,
+    PizzacornCommunityConfig.databaseName,
+  ))).valueOrNull == true;
+}
+
 class CommunityPrincipalContent extends ConsumerWidget {
   final CommunityModel communityModel;
   final bool noNavigation;
@@ -59,17 +76,7 @@ class CommunityPrincipalContent extends ConsumerWidget {
         : isSecondary
         ? communityModel.secondaryUserId
         : communityModel.userId;
-    final String? usersCollection = PizzacornCommunityConfig.usersCollection;
-    final String? usersVerifyField = PizzacornCommunityConfig.usersVerifyField;
-    final bool isVerified = userId.isNotEmpty &&
-        usersCollection != null && usersCollection.isNotEmpty &&
-        usersVerifyField != null && usersVerifyField.isNotEmpty &&
-        ref.watch(communityVerifiedProvider((
-          usersCollection,
-          userId,
-          usersVerifyField,
-          PizzacornCommunityConfig.databaseName,
-        ))).valueOrNull == true;
+    final bool isVerified = isCommunityVerified(ref: ref, id: userId);
     final CommunityProfileCallback? onTapUser =
         PizzacornCommunityConfig.onTapUser ??
         PizzacornCommunityConfig.onOpenProfile;

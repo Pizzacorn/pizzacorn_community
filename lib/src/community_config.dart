@@ -82,6 +82,7 @@ class PizzacornCommunityConfig {
   static String? entitiesNicknameField;
   static String? entitiesNameField;
   static String? entitiesImageField;
+  static String? entitiesVerifyField;
   static CommunitySearchUsersCallback? onSearchEntities;
   static CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal;
   static Color usersMentionColor = Colors.blue;
@@ -152,6 +153,7 @@ void ConfigurePizzacornCommunity({
   String? entitiesNicknameField,
   String? entitiesNameField,
   String? entitiesImageField,
+  String? entitiesVerifyField,
   CommunitySearchUsersCallback? onSearchEntities,
   CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal,
   Color usersMentionColor = Colors.blue,
@@ -219,6 +221,7 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.entitiesNicknameField = entitiesNicknameField;
   PizzacornCommunityConfig.entitiesNameField = entitiesNameField;
   PizzacornCommunityConfig.entitiesImageField = entitiesImageField;
+  PizzacornCommunityConfig.entitiesVerifyField = entitiesVerifyField;
   PizzacornCommunityConfig.onSearchEntities = onSearchEntities;
   PizzacornCommunityConfig.entitiesSearchMode = entitiesSearchMode;
   PizzacornCommunityConfig.usersMentionColor = usersMentionColor;

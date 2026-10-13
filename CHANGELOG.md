@@ -1,3 +1,9 @@
+## 0.0.19
+
+- Permite mencionar usuarios y entidades desde las respuestas, con sugerencias dentro de la barra inferior y persistencia de los identificadores seleccionados.
+- Muestra el verificado en la foto al crear publicaciones y en las sugerencias de menciones.
+- Añade `entitiesVerifyField` para configurar el verificado de las entidades en las sugerencias de `#`.
+
 ## 0.0.18
 
 - Actualiza pizzacorn_ui a la versión 0.0.140 y adapta el aviso del muro a DisclaimerWidget.

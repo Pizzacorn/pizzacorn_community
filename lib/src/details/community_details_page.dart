@@ -122,32 +122,10 @@ class CommunityDetailsPage extends ConsumerWidget {
                 ),
                 Space(SPACE_SMALL),
               ],
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: controller.pickImages,
-                    icon: Icon(
-                      UIconsPro.regularRounded.picture,
-                      color: COLOR_ACCENT,
-                      size: 20,
-                    ),
-                  ),
-                  Expanded(
-                    child: TextFieldCustom(
-                      controller: controller.textController,
-                      hintText: 'Añade una respuesta',
-                      textCapitalization: TextCapitalization.sentences,
-                      textInputType: TextInputType.multiline,
-                      minLines: 1,
-                      maxLines: 4,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () =>
-                        controller.saveComment(context: context),
-                    icon: Icon( UIconsPro.regularRounded.paper_plane_top, color: COLOR_ACCENT, size: 20,),
-                  ),
-                ],
+              CommunityCommentComposer(
+                controller: controller.textController,
+                onPickImages: controller.pickImages,
+                onSend: () => controller.saveComment(context: context),
               ),
             ],
           ),

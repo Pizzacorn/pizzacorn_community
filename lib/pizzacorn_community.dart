@@ -23,6 +23,7 @@ export 'src/community_page.dart';
 export 'src/create/community_create_controller.dart';
 export 'src/create/community_create_page.dart';
 export 'src/details/community_details_controller.dart';
+export 'src/details/community_comment_composer.dart';
 export 'src/details/community_details_page.dart';
 export 'src/functions/community_repository.dart';
 export 'src/functions/community_search_repository.dart';

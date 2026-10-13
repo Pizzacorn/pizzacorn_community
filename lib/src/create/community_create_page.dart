@@ -14,6 +14,7 @@ class CommunityCreatePage extends ConsumerWidget {
       communityCreateProvider(quotePost).notifier,
     );
     final CommunityUserModel currentUser = PizzacornCommunityConfig.currentUser;
+    final bool isVerified = isCommunityVerified(ref: ref, id: currentUser.id);
 
     return Scaffold(
       backgroundColor: PizzacornCommunityConfig.backgroundColor,
@@ -38,7 +39,12 @@ class CommunityCreatePage extends ConsumerWidget {
                     size: 45,
                     singleBorder: true,
                     innerBorderWidth: 0,
-                    outerBorderWidth: 0,
+                    outerBorderWidth: isVerified
+                        ? PizzacornCommunityConfig.verifiedBorderWidth
+                        : 0,
+                    outerBorderColor: isVerified
+                        ? PizzacornCommunityConfig.verifiedBorderColor ?? COLOR_INFO
+                        : null,
                     onPressed: currentUser.id.isEmpty ||
                             (PizzacornCommunityConfig.onTapUser == null &&
                                 PizzacornCommunityConfig.onOpenProfile == null)
