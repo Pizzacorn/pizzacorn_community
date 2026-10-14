@@ -258,6 +258,40 @@ void main() {
     await tester.pumpWidget(SizedBox());
   });
 
+  testWidgets('Muestra cuatro sugerencias iniciales para @ y # sin texto', (tester) async {
+    final CommunityMentionController controller = CommunityMentionController();
+    addTearDown(controller.dispose);
+    final List<String> queries = [];
+    Future<List<CommunityUserModel>> suggestions({required String query}) async {
+      queries.add(query);
+      return List<CommunityUserModel>.generate(6, (index) => CommunityUserModel(
+        id: 'id-$index', name: 'Sugerencia $index', username: 'usuario$index',
+      ));
+    }
+    ConfigurePizzacornCommunity(
+      onSearchUsers: suggestions,
+      onSearchEntities: suggestions,
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: CommunityMentionField(controller: controller),
+    )));
+    await tester.enterText(find.byType(TextField), '@');
+    await tester.pumpAndSettle();
+    expect(queries, ['']);
+    expect(find.text('Sugerencia 0'), findsOneWidget);
+    expect(tester.state<CommunityMentionSheetState>(find.byType(CommunityMentionSheet)).users.length, 4);
+    expect(find.text('Sugerencia 4'), findsNothing);
+
+    await tester.enterText(find.byType(TextField), '#');
+    await tester.pumpAndSettle();
+    expect(queries, ['', '']);
+    expect(find.text('Sugerencia 0'), findsOneWidget);
+    expect(tester.state<CommunityMentionSheetState>(find.byType(CommunityMentionSheet)).users.length, 4);
+    expect(find.text('Sugerencia 4'), findsNothing);
+    await tester.pumpWidget(SizedBox());
+  });
+
   test('Completa y colorea un email usado como nickname', () {
     final CommunityMentionController controller = CommunityMentionController();
     addTearDown(controller.dispose);

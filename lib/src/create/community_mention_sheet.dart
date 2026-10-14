@@ -40,7 +40,11 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
     debounce?.cancel();
     requestId++;
     setState(() { isLoading = true; isError = ''; users = []; });
-    debounce = Timer(Duration(milliseconds: 300), () => search(query: query));
+    if (query.trim().isEmpty) {
+      search(query: query);
+    } else {
+      debounce = Timer(Duration(milliseconds: 300), () => search(query: query));
+    }
   }
 
   Future<void> search({required String query}) async {
@@ -61,6 +65,7 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
             !CommunityMentionController.usernameExpression.hasMatch(username) ||
             !ids.add(userModel.id)) continue;
         filteredUsers.add(userModel);
+        if (query.trim().isEmpty && filteredUsers.length == 4) break;
       }
       setState(() { users = filteredUsers; isLoading = false; isError = ''; });
     } catch (error) {

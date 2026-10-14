@@ -1,3 +1,7 @@
+## 0.0.20
+
+- Muestra hasta cuatro sugerencias de usuarios o entidades en cuanto se escribe `@` o `#`, sin esperar a introducir texto de búsqueda.
+
 ## 0.0.19
 
 - Permite mencionar usuarios y entidades desde las respuestas, con sugerencias dentro de la barra inferior y persistencia de los identificadores seleccionados.
