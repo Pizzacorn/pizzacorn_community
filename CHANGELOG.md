@@ -1,3 +1,11 @@
+## 0.0.21
+
+- Lee las primeras cuatro sugerencias de la colección configurada al escribir solo `@` o `#`, sin ordenar ni filtrar por nickname.
+- Conserva las sugerencias mientras se busca, coloca los resultados nuevos arriba y limita la altura de la lista para permitir el desplazamiento.
+- Mantiene visible el icono de comentarios en el detalle sin permitir que abra otra vez la misma publicación.
+- Añade `disclaimerTextStyle` para personalizar el texto del aviso del muro.
+- Corrige la superficie Material de las sugerencias para mostrar correctamente las pulsaciones.
+
 ## 0.0.20
 
 - Muestra hasta cuatro sugerencias de usuarios o entidades en cuanto se escribe `@` o `#`, sin esperar a introducir texto de búsqueda.

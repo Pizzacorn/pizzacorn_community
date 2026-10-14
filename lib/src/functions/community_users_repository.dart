@@ -3,12 +3,35 @@ import 'package:pizzacorn_community/pizzacorn_community.dart';
 class CommunityUsersRepository {
   Future<List<CommunityUserModel>> search({required String query, bool isEntity = false}) async {
     final CommunitySearchUsersCallback? callback = isEntity ? PizzacornCommunityConfig.onSearchEntities : PizzacornCommunityConfig.onSearchUsers;
-    if (callback != null) return callback(query: query.trim());
     final String? collection = isEntity ? PizzacornCommunityConfig.entitiesCollection : PizzacornCommunityConfig.usersCollection;
     final String? nicknameField = isEntity ? PizzacornCommunityConfig.entitiesNicknameField : PizzacornCommunityConfig.usersNicknameField;
-    if (collection == null || nicknameField == null) return [];
 
     final String prefix = query.trim();
+    if (prefix.isEmpty && collection != null && nicknameField != null) {
+      final QuerySnapshot<Map<String, dynamic>> snapshot = await PizzacornCommunityConfig.database
+          .collection(collection).limit(4).get();
+      final List<CommunityUserModel> users = [];
+      for (int i = 0; i < snapshot.docs.length; i++) {
+        final QueryDocumentSnapshot<Map<String, dynamic>> document = snapshot.docs[i];
+        final String nickname = readString(document: document, field: nicknameField);
+        final String name = readString(
+          document: document,
+          field: isEntity ? PizzacornCommunityConfig.entitiesNameField : PizzacornCommunityConfig.usersNameField,
+        );
+        users.add(CommunityUserModel(
+          id: document.id,
+          username: nickname.isEmpty ? document.id : nickname,
+          name: name.isEmpty ? (nickname.isEmpty ? document.id : nickname) : name,
+          image: readString(
+            document: document,
+            field: isEntity ? PizzacornCommunityConfig.entitiesImageField : PizzacornCommunityConfig.usersImageField,
+          ),
+        ));
+      }
+      return users;
+    }
+    if (callback != null) return callback(query: prefix);
+    if (collection == null || nicknameField == null) return [];
     if ((isEntity ? PizzacornCommunityConfig.entitiesSearchMode : PizzacornCommunityConfig.usersSearchMode) == CommunityUsersSearchMode.enterprise) {
       return searchEnterprise(collection: collection, nicknameField: nicknameField, query: prefix, isEntity: isEntity);
     }

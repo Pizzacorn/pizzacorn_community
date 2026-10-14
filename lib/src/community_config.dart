@@ -44,6 +44,7 @@ class PizzacornCommunityConfig {
   static bool showSearch = false;
   static bool showDisclaimer = false;
   static String disclaimerText = '';
+  static TextStyle? disclaimerTextStyle;
   static String title = 'Comunidad';
   static String? backgroundAsset;
   static Color? customBackgroundColor;
@@ -118,6 +119,7 @@ void ConfigurePizzacornCommunity({
   bool showSearch = false,
   bool showDisclaimer = false,
   String disclaimerText = '',
+  TextStyle? disclaimerTextStyle,
   String title = 'Comunidad',
   String? backgroundAsset,
   Color? backgroundColor,
@@ -185,6 +187,7 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.showSearch = showSearch;
   PizzacornCommunityConfig.showDisclaimer = showDisclaimer;
   PizzacornCommunityConfig.disclaimerText = disclaimerText;
+  PizzacornCommunityConfig.disclaimerTextStyle = disclaimerTextStyle;
   PizzacornCommunityConfig.title = title;
   PizzacornCommunityConfig.backgroundAsset = backgroundAsset;
   PizzacornCommunityConfig.customBackgroundColor = backgroundColor;

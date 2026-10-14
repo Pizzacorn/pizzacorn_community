@@ -237,7 +237,10 @@ void main() {
       CommunityUserModel(id: 'ana-id', name: 'Ana', username: 'ana'),
     ];
     await tester.pumpWidget(MaterialApp(home: Scaffold(
-      body: CommunityMentionField(controller: controller),
+      body: DecoratedBox(
+        decoration: BoxDecoration(color: Colors.white),
+        child: CommunityMentionField(controller: controller),
+      ),
     )));
     await tester.enterText(find.byType(TextField), 'Hola @');
     await tester.pumpAndSettle();
@@ -269,6 +272,8 @@ void main() {
       ));
     }
     ConfigurePizzacornCommunity(
+      currentUser: CommunityUserModel(id: 'id-0'),
+      blockedUserIds: ['id-1'],
       onSearchUsers: suggestions,
       onSearchEntities: suggestions,
     );
@@ -289,6 +294,83 @@ void main() {
     expect(find.text('Sugerencia 0'), findsOneWidget);
     expect(tester.state<CommunityMentionSheetState>(find.byType(CommunityMentionSheet)).users.length, 4);
     expect(find.text('Sugerencia 4'), findsNothing);
+    await tester.pumpWidget(SizedBox());
+  });
+
+  testWidgets('Conserva sugerencias al buscar y coloca los resultados nuevos arriba', (tester) async {
+    final CommunityMentionController controller = CommunityMentionController();
+    addTearDown(controller.dispose);
+    final Completer<List<CommunityUserModel>> pendingResults = Completer<List<CommunityUserModel>>();
+    ConfigurePizzacornCommunity(
+      onSearchUsers: ({required String query}) async {
+        if (query == 'an') return pendingResults.future;
+        if (query == 'zz') return [];
+        return [
+          CommunityUserModel(id: 'one', name: 'Uno', username: 'uno'),
+          CommunityUserModel(id: 'two', name: 'Dos', username: 'dos'),
+        ];
+      },
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: CommunityMentionField(controller: controller),
+    )));
+    await tester.enterText(find.byType(TextField), '@');
+    await tester.pumpAndSettle();
+    expect(find.text('Uno'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), '@an');
+    await tester.pump();
+    await tester.pump(Duration(milliseconds: 350));
+    expect(find.text('Uno'), findsOneWidget);
+    pendingResults.complete([
+      CommunityUserModel(id: 'two', name: 'Dos actualizado', username: 'dos'),
+      CommunityUserModel(id: 'three', name: 'Ana', username: 'ana'),
+    ]);
+    await tester.pumpAndSettle();
+    final CommunityMentionSheetState sheetState =
+        tester.state<CommunityMentionSheetState>(find.byType(CommunityMentionSheet));
+    expect(sheetState.users.map((userModel) => userModel.id).toList(), ['two', 'three', 'one']);
+
+    await tester.enterText(find.byType(TextField), '@zz');
+    await tester.pump();
+    await tester.pump(Duration(milliseconds: 350));
+    await tester.pumpAndSettle();
+    expect(sheetState.users.map((userModel) => userModel.id).toList(), ['two', 'three', 'one']);
+    expect(find.text('No hay coincidencias.'), findsNothing);
+    await tester.pumpWidget(SizedBox());
+  });
+
+  testWidgets('Limita la altura de las sugerencias y permite desplazarlas', (tester) async {
+    final CommunityMentionController controller = CommunityMentionController();
+    addTearDown(controller.dispose);
+    ConfigurePizzacornCommunity(
+      onSearchUsers: ({required String query}) async => List<CommunityUserModel>.generate(
+        8,
+        (index) => CommunityUserModel(
+          id: 'user-$index', name: 'Usuario $index', username: 'usuario$index',
+        ),
+      ),
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: CommunityMentionField(controller: controller),
+    )));
+    await tester.enterText(find.byType(TextField), '@a');
+    await tester.pumpAndSettle();
+
+    final Finder suggestions = find.descendant(
+      of: find.byType(CommunityMentionSheet),
+      matching: find.byType(ListView),
+    );
+    expect(tester.getSize(suggestions).height, lessThanOrEqualTo(216));
+    final ScrollableState scrollableState = tester.state<ScrollableState>(
+      find.descendant(of: find.byType(CommunityMentionSheet), matching: find.byType(Scrollable)),
+    );
+    expect(scrollableState.position.maxScrollExtent, greaterThan(0));
+    await tester.drag(suggestions, Offset(0, -250));
+    await tester.pumpAndSettle();
+    expect(scrollableState.position.pixels, greaterThan(0));
     await tester.pumpWidget(SizedBox());
   });
 

@@ -97,6 +97,7 @@ class CommunityPage extends ConsumerWidget {
                         padding: PADDING_ALL,
                         child: DisclaimerWidget(
                           text: PizzacornCommunityConfig.disclaimerText,
+                          style: PizzacornCommunityConfig.disclaimerTextStyle,
                         ),
                       ),
                     ),

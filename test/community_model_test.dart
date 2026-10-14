@@ -2,6 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pizzacorn_community/pizzacorn_community.dart';
 
 void main() {
+  test('Configura el estilo del texto del disclaimer', () {
+    final TextStyle disclaimerTextStyle = TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    );
+    ConfigurePizzacornCommunity(disclaimerTextStyle: disclaimerTextStyle);
+    addTearDown(() => ConfigurePizzacornCommunity());
+
+    expect(PizzacornCommunityConfig.disclaimerTextStyle, same(disclaimerTextStyle));
+  });
+
   test('CommunityPage permite ajustar la altura del botón de publicar', () {
     final CommunityPage communityPage = CommunityPage(
       floatingButtonHeight: 150,

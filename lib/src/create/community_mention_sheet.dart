@@ -27,7 +27,9 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
   @override
   void didUpdateWidget(covariant CommunityMentionSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.query != widget.query || oldWidget.isEntity != widget.isEntity) scheduleSearch(widget.query);
+    if (oldWidget.query != widget.query || oldWidget.isEntity != widget.isEntity) {
+      scheduleSearch(widget.query, clearUsers: oldWidget.isEntity != widget.isEntity);
+    }
   }
 
   @override
@@ -36,10 +38,14 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
     super.dispose();
   }
 
-  void scheduleSearch(String query) {
+  void scheduleSearch(String query, {bool clearUsers = false}) {
     debounce?.cancel();
     requestId++;
-    setState(() { isLoading = true; isError = ''; users = []; });
+    setState(() {
+      if (clearUsers) users = [];
+      isLoading = users.isEmpty;
+      isError = '';
+    });
     if (query.trim().isEmpty) {
       search(query: query);
     } else {
@@ -59,24 +65,41 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
       for (int i = 0; i < results.length; i++) {
         final CommunityUserModel userModel = results[i];
         final String username = userModel.username.replaceFirst(RegExp(r'^[@#]'), '');
+        if (query.trim().isEmpty) {
+          filteredUsers.add(userModel);
+          if (filteredUsers.length == 4) break;
+          continue;
+        }
         if (userModel.id.isEmpty || (!widget.isEntity && (userModel.id == currentUserModel.id ||
             PizzacornCommunityConfig.isUserBlocked(userModel.id) ||
             userModel.blockedUsers.contains(currentUserModel.id))) ||
             !CommunityMentionController.usernameExpression.hasMatch(username) ||
             !ids.add(userModel.id)) continue;
         filteredUsers.add(userModel);
-        if (query.trim().isEmpty && filteredUsers.length == 4) break;
       }
-      setState(() { users = filteredUsers; isLoading = false; isError = ''; });
+      final Set<String> newIds = {};
+      final List<CommunityUserModel> mergedUsers = [];
+      for (int i = 0; i < filteredUsers.length && mergedUsers.length < 20; i++) {
+        final CommunityUserModel userModel = filteredUsers[i];
+        if (newIds.add(userModel.id)) mergedUsers.add(userModel);
+      }
+      for (int i = 0; i < users.length && mergedUsers.length < 20; i++) {
+        final CommunityUserModel userModel = users[i];
+        if (newIds.add(userModel.id)) mergedUsers.add(userModel);
+      }
+      setState(() { users = mergedUsers; isLoading = false; isError = ''; });
     } catch (error) {
       if (!mounted || currentRequest != requestId) return;
-      setState(() { isLoading = false; isError = 'No se pudieron cargar las sugerencias.'; });
+      setState(() {
+        isLoading = false;
+        if (users.isEmpty) isError = 'No se pudieron cargar las sugerencias.';
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    if (isLoading && users.isEmpty) {
       return Space(0);
     }
     if (isError.isNotEmpty) {
@@ -94,8 +117,10 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
         child: TextBody('No hay coincidencias.'),
       );
     }
+    final double availableHeight = MediaQuery.sizeOf(context).height * 0.3;
+    final double maxSuggestionsHeight = availableHeight < 216 ? availableHeight : 216;
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.3),
+      constraints: BoxConstraints(maxHeight: maxSuggestionsHeight),
       child: Container(
         margin: EdgeInsets.only(top: SPACE_SMALL),
         decoration: BoxDecoration(
@@ -115,38 +140,41 @@ class CommunityMentionSheetState extends State<CommunityMentionSheet> {
                   id: userModel.id,
                   isEntity: widget.isEntity,
                 );
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: ProfileImageCustom(
-                    imageUrl: userModel.image,
-                    size: 40,
-                    singleBorder: true,
-                    innerBorderWidth: 0,
-                    outerBorderWidth: isVerified
-                        ? PizzacornCommunityConfig.verifiedBorderWidth
-                        : 0,
-                    outerBorderColor: isVerified
-                        ? PizzacornCommunityConfig.verifiedBorderColor ?? COLOR_INFO
-                        : null,
-                  ),
-                  title: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(child: TextBody(userModel.name, maxlines: 1)),
-                      if (isVerified) ...[
-                        Space(SPACE_SMALLEST),
-                        Icon(Icons.verified, size: 17,
-                            color: PizzacornCommunityConfig.verifiedTickBackgroundColor ?? COLOR_INFO,
-                            semanticLabel: 'Perfil verificado'),
+                return Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: ProfileImageCustom(
+                      imageUrl: userModel.image,
+                      size: 40,
+                      singleBorder: true,
+                      innerBorderWidth: 0,
+                      outerBorderWidth: isVerified
+                          ? PizzacornCommunityConfig.verifiedBorderWidth
+                          : 0,
+                      outerBorderColor: isVerified
+                          ? PizzacornCommunityConfig.verifiedBorderColor ?? COLOR_INFO
+                          : null,
+                    ),
+                    title: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(child: TextBody(userModel.name, maxlines: 1)),
+                        if (isVerified) ...[
+                          Space(SPACE_SMALLEST),
+                          Icon(Icons.verified, size: 17,
+                              color: PizzacornCommunityConfig.verifiedTickBackgroundColor ?? COLOR_INFO,
+                              semanticLabel: 'Perfil verificado'),
+                        ],
                       ],
-                    ],
+                    ),
+                    subtitle: TextCaption('${widget.isEntity ? '#' : '@'}${userModel.username.replaceFirst(RegExp(r'^[@#]'), '')}'),
+                    onTap: () {
+                      if (!widget.onSelected(userModel: userModel)) {
+                        setState(() { isError = 'La mención supera el límite de 250 caracteres.'; });
+                      }
+                    },
                   ),
-                  subtitle: TextCaption('${widget.isEntity ? '#' : '@'}${userModel.username.replaceFirst(RegExp(r'^[@#]'), '')}'),
-                  onTap: () {
-                    if (!widget.onSelected(userModel: userModel)) {
-                      setState(() { isError = 'La mención supera el límite de 250 caracteres.'; });
-                    }
-                  },
                 );
               },
             );

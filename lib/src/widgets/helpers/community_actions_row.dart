@@ -4,12 +4,14 @@ class CommunityActionsRow extends ConsumerStatefulWidget {
   final CommunityModel communityModel;
   final PaginationParams<CommunityModel> params;
   final bool showCommentAction;
+  final bool commentActionEnabled;
 
   CommunityActionsRow({
     super.key,
     required this.communityModel,
     required this.params,
     this.showCommentAction = true,
+    this.commentActionEnabled = true,
   });
 
   @override
@@ -79,7 +81,7 @@ class CommunityActionsRowState extends ConsumerState<CommunityActionsRow> {
             CommunityActionButton(
               icon: UIconsPro.regularRounded.comment,
               label: '${counts['commentsCount'] ?? 0}',
-              onTap: openComments,
+              onTap: widget.commentActionEnabled ? openComments : null,
             ),
           CommunityActionButton(
             icon: UIconsPro.regularRounded.arrows_retweet,

@@ -87,11 +87,13 @@ ConfigurePizzacornCommunity(
   currentUser: currentUserModel,
   showDisclaimer: true,
   disclaimerText: 'Información importante sobre las publicaciones.',
+  disclaimerTextStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
 );
 ```
 
 `showDisclaimer` es `false` por defecto. El aviso también se oculta si el texto
-está vacío y aparece tanto en el muro como durante la búsqueda.
+está vacío y aparece tanto en el muro como durante la búsqueda. Si no se indica
+`disclaimerTextStyle`, se conserva el estilo predeterminado de `DisclaimerWidget`.
 
 Para mostrar categorías en el muro y al publicar, configura los filtros y sus
 colores opcionales:
@@ -242,27 +244,31 @@ un string sin `@` inicial. También se admiten emails como identificador de menc
 Las sugerencias aparecen debajo del editor y se actualizan al escribir o mover el
 cursor dentro de una mención. Al seleccionar, desaparecen y el editor conserva el foco.
 
-En modo `normal` (predeterminado), la consulta ordena por nickname y obtiene hasta 20 documentos. Con texto busca
-por prefijo, distinguiendo mayúsculas y minúsculas; sin texto muestra las primeras
-sugerencias. Requiere permiso de lectura e indexación del campo configurado en
+Sin texto, el selector lee directamente los primeros cuatro documentos de la
+colección configurada, sin ordenar ni filtrar por nickname. Si falta el nickname,
+usa el ID del documento para la mención. En modo `normal` (predeterminado), con
+texto la consulta ordena por nickname y obtiene hasta 20 documentos por prefijo,
+distinguiendo mayúsculas y minúsculas. Requiere permiso de lectura e indexación del campo configurado en
 Firestore. No descarga toda la colección ni crea campos auxiliares.
 
 Para Enterprise usa `usersSearchMode: CommunityUsersSearchMode.enterprise`.
 Ejecuta un Pipeline con `SearchStage` como primera etapa después de la colección,
 buscando el texto en el campo de nickname configurado, con un máximo de 20 resultados.
 Utiliza búsqueda de texto de Enterprise, no la búsqueda por prefijo del modo normal.
-Sin texto, obtiene sugerencias con un Pipeline ordenado por nickname.
+Sin texto, usa la misma lectura directa de cuatro documentos que el modo normal.
 Requiere una base Enterprise y el índice de búsqueda correspondiente; no cambia
 automáticamente de modo si falla. Usa `databaseName` para seleccionar tu base.
 Consulta la [documentación de búsqueda Enterprise](https://firebase.google.com/docs/firestore/enterprise/text-search).
 La API requiere `cloud_firestore >=6.6.0`. Las rutas de campo en este modo deben
 usar letras ASCII, números y guiones bajos, separadas por puntos y sin comenzar por un número.
 
-Se conserva `onSearchUsers` como alternativa opcional con prioridad sobre la
-colección: recibe `query` como parámetro nombrado y devuelve
+Se conserva `onSearchUsers` como alternativa opcional. Tiene prioridad sobre la
+colección cuando hay texto; sin texto se usa la colección configurada si existe.
+Recibe `query` como parámetro nombrado y devuelve
 `Future<List<CommunityUserModel>>`. Sin ninguna fuente configurada no se abre el
-selector. Se excluyen el usuario actual y sus IDs bloqueados; los bloqueos del
-otro usuario solo pueden filtrarse si el callback devuelve `blockedUsers`.
+selector. Con texto se excluyen el usuario actual y sus IDs bloqueados; los bloqueos del
+otro usuario solo pueden filtrarse si el callback devuelve `blockedUsers`. Sin texto
+se muestran los cuatro primeros resultados tal como llegan.
 
 Al seleccionar, se inserta `@username` en el cursor respetando el límite de 250
 caracteres. Las menciones aparecen en azul tanto en el editor como en el muro y

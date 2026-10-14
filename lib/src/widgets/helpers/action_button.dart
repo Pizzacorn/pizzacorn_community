@@ -4,7 +4,7 @@ class CommunityActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color? color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   CommunityActionButton({
     super.key,
