@@ -65,6 +65,43 @@ void main() {
     expect(restored.toJsonUpdate()['mediaThumbnails'], ['small.png']);
   });
 
+  test('Conserva opciones y resultados de encuesta en la serialización', () {
+    final CommunityModel post = CommunityModel(
+      pollOptions: ['Sí', 'No'],
+      pollCounts: [3, 1],
+    );
+    final CommunityModel restored = CommunityModel.fromJson(post.toJson());
+    expect(restored.pollOptions, ['Sí', 'No']);
+    expect(restored.pollCounts, [3, 1]);
+    expect(CommunityModel.fromJson({}).pollOptions, isEmpty);
+  });
+
+  test('El adjunto conserva el contenido configurado en la publicación', () {
+    ConfigurePizzacornCommunity(
+      addEntityAttachmentText: 'Añadir club',
+      viewEntityAttachmentText: 'Ver club',
+      entityAttachmentTitle: (targetModel) => 'Club ${targetModel.name}',
+      entityAttachmentBody: (targetModel) => '@${targetModel.username}',
+      entityAttachmentChip: (targetModel) => 'Club asociado',
+    );
+    addTearDown(() => ConfigurePizzacornCommunity());
+
+    final CommunityAttachmentModel attachmentModel = CommunityAttachmentModel.fromUser(
+      targetModel: CommunityUserModel(id: 'club-1', name: 'Norte', username: 'norte'),
+      isEntity: true,
+    );
+    final CommunityModel restored = CommunityModel.fromJson(
+      CommunityModel(attachment: attachmentModel).toJson(),
+    );
+
+    expect(PizzacornCommunityConfig.addEntityAttachmentText, 'Añadir club');
+    expect(restored.attachment?.targetId, 'club-1');
+    expect(restored.attachment?.title, 'Club Norte');
+    expect(restored.attachment?.body, '@norte');
+    expect(restored.attachment?.chip, 'Club asociado');
+    expect(CommunityModel.fromJson({}).attachment, isNull);
+  });
+
   testWidgets('La galería abre la foto pulsada y cambia con swipe', (tester) async {
     await tester.pumpWidget(MaterialApp(
       home: CommunityImageGalleryPage(

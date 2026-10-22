@@ -200,6 +200,12 @@ class CommunityPrincipalContent extends ConsumerWidget {
                     Space(SPACE_SMALL),
                     buildCommunityImageGrid(context, media: media, mediaThumbnails: mediaThumbnails),
                   ],
+                  if (!isSecondary && !isThird && communityModel.pollOptions.isNotEmpty)
+                    CommunityPoll(communityModel: communityModel),
+                  if (!isSecondary && !isThird && communityModel.attachment != null) ...[
+                    Space(SPACE_SMALL),
+                    CommunityAttachedCard(attachmentModel: communityModel.attachment!),
+                  ],
                   if (!isSecondary &&
                       !isThird &&
                       (communityModel.type == CommunityType.quote ||

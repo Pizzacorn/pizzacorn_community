@@ -1,3 +1,10 @@
+## 0.0.22
+
+- Añade encuestas en publicaciones y comentarios, con un voto por perfil, cambio de opción y resultados en tiempo real.
+- Sustituye el icono de fotos por un clip con opciones para subir fotos, crear encuestas y adjuntar perfiles o entidades.
+- Permite configurar los textos, la visibilidad, el contenido y el botón de los adjuntos de perfiles y entidades.
+- Prepara las reglas de Firestore para validar los votos y sus contadores.
+
 ## 0.0.21
 
 - Lee las primeras cuatro sugerencias de la colección configurada al escribir solo `@` o `#`, sin ordenar ni filtrar por nickname.

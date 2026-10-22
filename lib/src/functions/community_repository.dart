@@ -4,9 +4,44 @@ class CommunityRepository {
   static const String collectionName = 'Community';
   static const String subcollectionLikes = 'Likes';
   static const String subcollectionReposts = 'Reposts';
+  static const String subcollectionVotes = 'Votes';
 
   FirebaseFirestore get database => PizzacornCommunityConfig.database;
   CommunityUserModel get currentUser => PizzacornCommunityConfig.currentUser;
+
+  Future<void> vote({required String postId, required int optionIndex}) async {
+    ensureAuthenticated();
+    final documentReference = database.collection(collectionName).doc(postId);
+    final voteReference = documentReference.collection(subcollectionVotes).doc(currentUser.id);
+    await database.runTransaction((transaction) async {
+      final postSnapshot = await transaction.get(documentReference);
+      final voteSnapshot = await transaction.get(voteReference);
+      final postData = postSnapshot.data();
+      if (postData == null || postData['hidden'] == true) {
+        throw StateError('La encuesta ya no está disponible.');
+      }
+      final options = List<String>.from(postData['pollOptions'] ?? []);
+      if (optionIndex < 0 || optionIndex >= options.length) {
+        throw StateError('Opción de encuesta no válida.');
+      }
+      final counts = List<int>.from(postData['pollCounts'] ?? []);
+      while (counts.length < options.length) {
+        counts.add(0);
+      }
+      final previous = voteSnapshot.data()?['optionIndex'];
+      if (previous == optionIndex) return;
+      if (previous is int && previous >= 0 && previous < counts.length) {
+        counts[previous] = (counts[previous] - 1).clamp(0, 2147483647);
+      }
+      counts[optionIndex]++;
+      transaction.update(documentReference, {'pollCounts': counts});
+      transaction.set(voteReference, {
+        'userId': currentUser.id,
+        'optionIndex': optionIndex,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    });
+  }
 
   Future<CommunityModel> getById({required String id}) async {
     final DocumentSnapshot<Map<String, dynamic>> snapshot = await database

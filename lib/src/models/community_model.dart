@@ -14,6 +14,9 @@ class CommunityModel {
   final String text;
   final List<String> media;
   final List<String> mediaThumbnails;
+  final List<String> pollOptions;
+  final List<int> pollCounts;
+  final CommunityAttachmentModel? attachment;
   final int likesCount;
   final int commentsCount;
   final int repostCount;
@@ -54,6 +57,9 @@ class CommunityModel {
     this.text = '',
     this.media = const [],
     this.mediaThumbnails = const [],
+    this.pollOptions = const [],
+    this.pollCounts = const [],
+    this.attachment,
     this.likesCount = 0,
     this.commentsCount = 0,
     this.repostCount = 0,
@@ -97,6 +103,11 @@ class CommunityModel {
       text: json['text'] ?? '',
       media: json['media'] != null ? List<String>.from(json['media']) : [],
       mediaThumbnails: json['mediaThumbnails'] != null ? List<String>.from(json['mediaThumbnails']) : [],
+      pollOptions: json['pollOptions'] is List ? List<String>.from(json['pollOptions']) : [],
+      pollCounts: json['pollCounts'] is List ? List<int>.from(json['pollCounts']) : [],
+      attachment: json['attachment'] is Map
+          ? CommunityAttachmentModel.fromJson(Map<String, dynamic>.from(json['attachment']))
+          : null,
       likesCount: json['likesCount'] ?? 0,
       commentsCount: json['commentsCount'] ?? 0,
       repostCount: json['repostCount'] ?? 0,
@@ -151,6 +162,9 @@ class CommunityModel {
       'text': text,
       'media': media,
       'mediaThumbnails': mediaThumbnails,
+      'pollOptions': pollOptions,
+      'pollCounts': pollCounts,
+      'attachment': attachment?.toJson(),
       'likesCount': likesCount,
       'commentsCount': commentsCount,
       'repostCount': repostCount,
@@ -208,6 +222,9 @@ class CommunityModel {
     String? text,
     List<String>? media,
     List<String>? mediaThumbnails,
+    List<String>? pollOptions,
+    List<int>? pollCounts,
+    CommunityAttachmentModel? attachment,
     int? likesCount,
     int? commentsCount,
     int? repostCount,
@@ -248,6 +265,9 @@ class CommunityModel {
       text: text ?? this.text,
       media: media ?? this.media,
       mediaThumbnails: mediaThumbnails ?? this.mediaThumbnails,
+      pollOptions: pollOptions ?? this.pollOptions,
+      pollCounts: pollCounts ?? this.pollCounts,
+      attachment: attachment ?? this.attachment,
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       repostCount: repostCount ?? this.repostCount,

@@ -5,12 +5,16 @@ class CommunityDetailsState {
   final String isError;
   final CommunityModel communityModel;
   final List<XFile> images;
+  final List<String> pollOptions;
+  final CommunityAttachmentModel? attachment;
 
   CommunityDetailsState({
     this.isLoading = false,
     this.isError = '',
     CommunityModel? communityModel,
     this.images = const [],
+    this.pollOptions = const [],
+    this.attachment,
   }) : communityModel = communityModel ?? CommunityModel();
 
   CommunityDetailsState copyWith({
@@ -18,12 +22,17 @@ class CommunityDetailsState {
     String? isError,
     CommunityModel? communityModel,
     List<XFile>? images,
+    List<String>? pollOptions,
+    CommunityAttachmentModel? attachment,
+    bool clearAttachment = false,
   }) {
     return CommunityDetailsState(
       isLoading: isLoading ?? this.isLoading,
       isError: isError ?? this.isError,
       communityModel: communityModel ?? this.communityModel,
       images: images ?? this.images,
+      pollOptions: pollOptions ?? this.pollOptions,
+      attachment: clearAttachment ? null : attachment ?? this.attachment,
     );
   }
 }
@@ -77,9 +86,41 @@ class CommunityDetailsController
     state = state.copyWith(images: images);
   }
 
+  void createPoll() => state = state.copyWith(pollOptions: ['', '']);
+  void cancelPoll() => state = state.copyWith(pollOptions: []);
+  void addPollOption() {
+    if (state.pollOptions.length < 4) {
+      state = state.copyWith(pollOptions: [...state.pollOptions, '']);
+    }
+  }
+  void removePollOption(int index) {
+    final options = List<String>.from(state.pollOptions)..removeAt(index);
+    state = state.copyWith(pollOptions: options);
+  }
+  void changePollOption(int index, String value) {
+    final options = List<String>.from(state.pollOptions);
+    options[index] = value;
+    state = state.copyWith(pollOptions: options);
+  }
+
+  void attachTarget({required CommunityUserModel targetModel, required bool isEntity}) {
+    state = state.copyWith(attachment: CommunityAttachmentModel.fromUser(
+      targetModel: targetModel,
+      isEntity: isEntity,
+    ));
+  }
+
+  void removeAttachment() => state = state.copyWith(clearAttachment: true);
+
   Future<void> saveComment({required BuildContext context}) async {
     final String text = textController.text.trim();
-    if (text.isEmpty && state.images.isEmpty) return;
+    if (text.isEmpty && state.images.isEmpty && state.pollOptions.isEmpty && state.attachment == null) return;
+    if (state.pollOptions.isNotEmpty &&
+        (state.pollOptions.length < 2 ||
+            state.pollOptions.any((option) => option.trim().isEmpty))) {
+      state = state.copyWith(isError: 'Escribe al menos dos opciones para la encuesta.');
+      return;
+    }
 
     try {
       state = state.copyWith(isLoading: true, isError: '');
@@ -98,6 +139,9 @@ class CommunityDetailsController
           mentionIds: textController.mentionIds,
           media: uploadedMedia.media,
           mediaThumbnails: uploadedMedia.mediaThumbnails,
+          pollOptions: state.pollOptions.map((option) => option.trim()).toList(),
+          pollCounts: List<int>.filled(state.pollOptions.length, 0),
+          attachment: state.attachment,
           secondaryId: state.communityModel.id,
           secondaryReplyTo: state.communityModel.userUsername,
           secondaryReplyToId: state.communityModel.userId,
@@ -105,7 +149,7 @@ class CommunityDetailsController
         isComment: true,
       );
       textController.clear();
-      state = state.copyWith(images: []);
+      state = state.copyWith(images: [], pollOptions: [], clearAttachment: true);
       if (context.mounted) FocusScope.of(context).unfocus();
       state = state.copyWith(
         communityModel: state.communityModel.copyWith(

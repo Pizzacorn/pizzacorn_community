@@ -5,6 +5,10 @@ export '../src/create/community_mention_controller.dart';
 export '../src/create/community_mention_field.dart';
 export '../src/create/community_mention_sheet.dart';
 export '../src/details/community_comment_composer.dart';
+export '../src/widgets/helpers/community_attachment_sheet.dart';
+export '../src/widgets/helpers/community_poll.dart';
+export '../src/models/community_attachment_model.dart';
+export '../src/widgets/helpers/community_attached_card.dart';
 export 'dart:io';
 
 export 'package:cloud_firestore/cloud_firestore.dart' hide kIsWasm;

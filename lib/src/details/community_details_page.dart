@@ -122,9 +122,34 @@ class CommunityDetailsPage extends ConsumerWidget {
                 ),
                 Space(SPACE_SMALL),
               ],
+              if (state.pollOptions.isNotEmpty) CommunityPollEditor(
+                options: state.pollOptions,
+                onRemove: controller.removePollOption,
+                onChanged: controller.changePollOption,
+                onAdd: controller.addPollOption,
+                onCancel: controller.cancelPoll,
+              ),
+              if (state.attachment != null) ...[
+                CommunityAttachedCard(
+                  attachmentModel: state.attachment!,
+                  onRemove: controller.removeAttachment,
+                ),
+                Space(SPACE_SMALL),
+              ],
+              if (state.isError.isNotEmpty) TextCaption(state.isError, color: COLOR_ERROR),
               CommunityCommentComposer(
                 controller: controller.textController,
                 onPickImages: controller.pickImages,
+                onCreatePoll: controller.createPoll,
+                onPickTarget: ({required bool isEntity}) async {
+                  final CommunityUserModel? targetModel = await pickCommunityAttachment(
+                    context: context,
+                    isEntity: isEntity,
+                  );
+                  if (targetModel != null) {
+                    controller.attachTarget(targetModel: targetModel, isEntity: isEntity);
+                  }
+                },
                 onSend: () => controller.saveComment(context: context),
               ),
             ],

@@ -46,6 +46,70 @@ service cloud.firestore {
         );
     }
 
+    function pollPath(postId) {
+      return /databases/$(database)/documents/Community/$(postId);
+    }
+
+    function votePath(postId, userId) {
+      return /databases/$(database)/documents/Community/$(postId)/Votes/$(userId);
+    }
+
+    function pollCountAt(data, index) {
+      return index < data.pollCounts.size() ? data.pollCounts[index] : 0;
+    }
+
+    function validPollDelta(before, after, oldOption, newOption) {
+      return before.pollOptions is list
+        && before.pollCounts is list
+        && after.pollOptions == before.pollOptions
+        && after.pollCounts is list
+        && after.pollCounts.size() == before.pollOptions.size()
+        && before.pollOptions.size() >= 2
+        && before.pollOptions.size() <= 4
+        && newOption is int
+        && newOption >= 0
+        && newOption < before.pollOptions.size()
+        && (
+          oldOption == -1
+          || (oldOption is int && oldOption >= 0
+            && oldOption < before.pollOptions.size()
+            && oldOption != newOption)
+        )
+        && pollDeltaAt(before, after, oldOption, newOption, 0)
+        && pollDeltaAt(before, after, oldOption, newOption, 1)
+        && pollDeltaAt(before, after, oldOption, newOption, 2)
+        && pollDeltaAt(before, after, oldOption, newOption, 3);
+    }
+
+    function pollDeltaAt(before, after, oldOption, newOption, index) {
+      return index >= before.pollOptions.size()
+        || pollCountAt(after, index) == pollCountAt(before, index)
+          + (index == newOption ? 1 : 0)
+          - (index == oldOption ? 1 : 0);
+    }
+
+    function changesPoll(postId) {
+      let path = votePath(postId, request.auth.uid);
+      let oldOption = exists(path) ? get(path).data.optionIndex : -1;
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pollCounts'])
+        && existsAfter(path)
+        && getAfter(path).data.userId == request.auth.uid
+        && validPollDelta(resource.data, request.resource.data,
+          oldOption, getAfter(path).data.optionIndex);
+    }
+
+    function validVote(postId, userId, oldOption) {
+      let path = pollPath(postId);
+      return userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasOnly(['userId', 'optionIndex', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && exists(path)
+        && existsAfter(path)
+        && validPollDelta(get(path).data, getAfter(path).data,
+          oldOption, request.resource.data.optionIndex);
+    }
+
     // El plugin no debe leer ni escribir Firestore directamente.
     // Todas las operaciones sensibles pasan por Cloud Functions con Admin SDK.
     match /wordpressPluginSites/{siteId} {
@@ -85,13 +149,20 @@ service cloud.firestore {
         && request.resource.data.id == postId
         && request.resource.data.type in ['post', 'comment', 'quote', 'repost']
         && request.resource.data.createdAt == request.time
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.pollOptions is list
+        && request.resource.data.pollCounts is list
+        && request.resource.data.pollOptions.size() == request.resource.data.pollCounts.size()
+        && request.resource.data.pollOptions.size() <= 4;
       allow update: if (
           isCommunityOwner()
           && request.resource.data.userId == resource.data.userId
           && request.resource.data.id == resource.data.id
           && request.resource.data.createdAt == resource.data.createdAt
-        ) || (isSignedIn() && changesOneCounter());
+          && request.resource.data.pollOptions == resource.data.pollOptions
+          && request.resource.data.pollCounts == resource.data.pollCounts
+        ) || (isSignedIn() && changesOneCounter())
+          || (isSignedIn() && changesPoll(postId));
       allow delete: if isCommunityOwner();
 
       match /Likes/{userId} {
@@ -113,6 +184,15 @@ service cloud.firestore {
           && request.resource.data.createdAt == request.time;
         allow delete: if isSignedIn() && userId == request.auth.uid;
         allow update: if false;
+      }
+
+      match /Votes/{userId} {
+        allow get: if isSignedIn() && userId == request.auth.uid;
+        allow list, delete: if false;
+        allow create: if isSignedIn() && validVote(postId, userId, -1);
+        allow update: if isSignedIn()
+          && resource.data.userId == request.auth.uid
+          && validVote(postId, userId, resource.data.optionIndex);
       }
     }
 

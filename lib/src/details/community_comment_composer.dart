@@ -3,12 +3,16 @@ import 'package:pizzacorn_community/pizzacorn_community.dart';
 class CommunityCommentComposer extends StatefulWidget {
   final CommunityMentionController controller;
   final VoidCallback onPickImages;
+  final VoidCallback onCreatePoll;
+  final Future<void> Function({required bool isEntity}) onPickTarget;
   final VoidCallback onSend;
 
   CommunityCommentComposer({
     super.key,
     required this.controller,
     required this.onPickImages,
+    required this.onCreatePoll,
+    required this.onPickTarget,
     required this.onSend,
   });
 
@@ -44,8 +48,13 @@ class CommunityCommentComposerState extends State<CommunityCommentComposer> {
         Row(
           children: [
             IconButton(
-              onPressed: widget.onPickImages,
-              icon: Icon(UIconsPro.regularRounded.picture, color: COLOR_ACCENT, size: 20),
+              onPressed: () => showCommunityAttachmentSheet(
+                context: context,
+                onPickImages: widget.onPickImages,
+                onCreatePoll: widget.onCreatePoll,
+                onPickTarget: widget.onPickTarget,
+              ),
+              icon: Icon(UIconsPro.regularRounded.clip, color: COLOR_ACCENT, size: 20),
             ),
             Expanded(
               child: TextField(

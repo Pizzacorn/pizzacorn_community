@@ -109,6 +109,20 @@ class CommunityCreatePage extends ConsumerWidget {
                   ),
                 ),
               ],
+              if (state.pollOptions.isNotEmpty) CommunityPollEditor(
+                options: state.pollOptions,
+                onRemove: controller.removePollOption,
+                onChanged: controller.changePollOption,
+                onAdd: controller.addPollOption,
+                onCancel: controller.cancelPoll,
+              ),
+              if (state.attachment != null) ...[
+                Space(SPACE_MEDIUM),
+                CommunityAttachedCard(
+                  attachmentModel: state.attachment!,
+                  onRemove: controller.removeAttachment,
+                ),
+              ],
               if (state.isError.isNotEmpty) ...[
                 Space(SPACE_SMALL),
                 TextCaption(state.isError, color: COLOR_ERROR),
@@ -128,9 +142,22 @@ class CommunityCreatePage extends ConsumerWidget {
           child: Row(
             children: [
               IconButton(
-                onPressed: controller.pickImages,
+                onPressed: () => showCommunityAttachmentSheet(
+                  context: context,
+                  onPickImages: controller.pickImages,
+                  onCreatePoll: controller.createPoll,
+                  onPickTarget: ({required bool isEntity}) async {
+                    final CommunityUserModel? targetModel = await pickCommunityAttachment(
+                      context: context,
+                      isEntity: isEntity,
+                    );
+                    if (targetModel != null) {
+                      controller.attachTarget(targetModel: targetModel, isEntity: isEntity);
+                    }
+                  },
+                ),
                 iconSize: 22,
-                icon: Icon(UIconsPro.regularRounded.picture, color: COLOR_ACCENT),
+                icon: Icon(UIconsPro.regularRounded.clip, color: COLOR_ACCENT),
               ),
               Space(SPACE_MEDIUM),
               Expanded(

@@ -14,6 +14,10 @@ typedef CommunityReportCallback =
 
 typedef CommunitySearchUsersCallback =
     Future<List<CommunityUserModel>> Function({required String query});
+typedef CommunityAttachmentTextCallback =
+    String Function(CommunityUserModel targetModel);
+typedef CommunityAttachmentPressedCallback =
+    FutureOr<void> Function(BuildContext context, CommunityAttachmentModel attachmentModel);
 
 enum CommunityNotificationType { post, like }
 
@@ -86,6 +90,28 @@ class PizzacornCommunityConfig {
   static String? entitiesVerifyField;
   static CommunitySearchUsersCallback? onSearchEntities;
   static CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal;
+  static bool showProfileAttachment = true;
+  static bool showEntityAttachment = true;
+  static String addProfileAttachmentText = 'Añadir perfil';
+  static String addEntityAttachmentText = 'Añadir entidad';
+  static String viewProfileAttachmentText = 'Ver perfil';
+  static String viewEntityAttachmentText = 'Ver entidad';
+  static CommunityAttachmentTextCallback? profileAttachmentTitle;
+  static CommunityAttachmentTextCallback? profileAttachmentBody;
+  static CommunityAttachmentTextCallback? profileAttachmentChip;
+  static CommunityAttachmentTextCallback? entityAttachmentTitle;
+  static CommunityAttachmentTextCallback? entityAttachmentBody;
+  static CommunityAttachmentTextCallback? entityAttachmentChip;
+  static CommunityAttachmentPressedCallback? onProfileAttachmentPressed;
+  static CommunityAttachmentPressedCallback? onEntityAttachmentPressed;
+  static Color? profileAttachmentButtonColor;
+  static Color? profileAttachmentButtonTextColor;
+  static Color? profileAttachmentButtonBorderColor;
+  static double profileAttachmentButtonBorderWidth = 1;
+  static Color? entityAttachmentButtonColor;
+  static Color? entityAttachmentButtonTextColor;
+  static Color? entityAttachmentButtonBorderColor;
+  static double entityAttachmentButtonBorderWidth = 1;
   static Color usersMentionColor = Colors.blue;
   static Color entitiesMentionColor = Colors.blue;
 
@@ -158,6 +184,28 @@ void ConfigurePizzacornCommunity({
   String? entitiesVerifyField,
   CommunitySearchUsersCallback? onSearchEntities,
   CommunityUsersSearchMode entitiesSearchMode = CommunityUsersSearchMode.normal,
+  bool showProfileAttachment = true,
+  bool showEntityAttachment = true,
+  String addProfileAttachmentText = 'Añadir perfil',
+  String addEntityAttachmentText = 'Añadir entidad',
+  String viewProfileAttachmentText = 'Ver perfil',
+  String viewEntityAttachmentText = 'Ver entidad',
+  CommunityAttachmentTextCallback? profileAttachmentTitle,
+  CommunityAttachmentTextCallback? profileAttachmentBody,
+  CommunityAttachmentTextCallback? profileAttachmentChip,
+  CommunityAttachmentTextCallback? entityAttachmentTitle,
+  CommunityAttachmentTextCallback? entityAttachmentBody,
+  CommunityAttachmentTextCallback? entityAttachmentChip,
+  CommunityAttachmentPressedCallback? onProfileAttachmentPressed,
+  CommunityAttachmentPressedCallback? onEntityAttachmentPressed,
+  Color? profileAttachmentButtonColor,
+  Color? profileAttachmentButtonTextColor,
+  Color? profileAttachmentButtonBorderColor,
+  double profileAttachmentButtonBorderWidth = 1,
+  Color? entityAttachmentButtonColor,
+  Color? entityAttachmentButtonTextColor,
+  Color? entityAttachmentButtonBorderColor,
+  double entityAttachmentButtonBorderWidth = 1,
   Color usersMentionColor = Colors.blue,
   Color entitiesMentionColor = Colors.blue,
 }) {
@@ -167,6 +215,9 @@ void ConfigurePizzacornCommunity({
   if (verifiedBorderWidth < 0) {
     throw ArgumentError.value(verifiedBorderWidth, 'verifiedBorderWidth',
         'No puede ser negativo.');
+  }
+  if (profileAttachmentButtonBorderWidth < 0 || entityAttachmentButtonBorderWidth < 0) {
+    throw ArgumentError('El grosor del borde del botón no puede ser negativo.');
   }
   if ((entitiesCollection != null || entitiesNicknameField != null) &&
       (entitiesCollection == null || entitiesCollection.trim().isEmpty ||
@@ -227,6 +278,28 @@ void ConfigurePizzacornCommunity({
   PizzacornCommunityConfig.entitiesVerifyField = entitiesVerifyField;
   PizzacornCommunityConfig.onSearchEntities = onSearchEntities;
   PizzacornCommunityConfig.entitiesSearchMode = entitiesSearchMode;
+  PizzacornCommunityConfig.showProfileAttachment = showProfileAttachment;
+  PizzacornCommunityConfig.showEntityAttachment = showEntityAttachment;
+  PizzacornCommunityConfig.addProfileAttachmentText = addProfileAttachmentText;
+  PizzacornCommunityConfig.addEntityAttachmentText = addEntityAttachmentText;
+  PizzacornCommunityConfig.viewProfileAttachmentText = viewProfileAttachmentText;
+  PizzacornCommunityConfig.viewEntityAttachmentText = viewEntityAttachmentText;
+  PizzacornCommunityConfig.profileAttachmentTitle = profileAttachmentTitle;
+  PizzacornCommunityConfig.profileAttachmentBody = profileAttachmentBody;
+  PizzacornCommunityConfig.profileAttachmentChip = profileAttachmentChip;
+  PizzacornCommunityConfig.entityAttachmentTitle = entityAttachmentTitle;
+  PizzacornCommunityConfig.entityAttachmentBody = entityAttachmentBody;
+  PizzacornCommunityConfig.entityAttachmentChip = entityAttachmentChip;
+  PizzacornCommunityConfig.onProfileAttachmentPressed = onProfileAttachmentPressed;
+  PizzacornCommunityConfig.onEntityAttachmentPressed = onEntityAttachmentPressed;
+  PizzacornCommunityConfig.profileAttachmentButtonColor = profileAttachmentButtonColor;
+  PizzacornCommunityConfig.profileAttachmentButtonTextColor = profileAttachmentButtonTextColor;
+  PizzacornCommunityConfig.profileAttachmentButtonBorderColor = profileAttachmentButtonBorderColor;
+  PizzacornCommunityConfig.profileAttachmentButtonBorderWidth = profileAttachmentButtonBorderWidth;
+  PizzacornCommunityConfig.entityAttachmentButtonColor = entityAttachmentButtonColor;
+  PizzacornCommunityConfig.entityAttachmentButtonTextColor = entityAttachmentButtonTextColor;
+  PizzacornCommunityConfig.entityAttachmentButtonBorderColor = entityAttachmentButtonBorderColor;
+  PizzacornCommunityConfig.entityAttachmentButtonBorderWidth = entityAttachmentButtonBorderWidth;
   PizzacornCommunityConfig.usersMentionColor = usersMentionColor;
   PizzacornCommunityConfig.entitiesMentionColor = entitiesMentionColor;
 }
